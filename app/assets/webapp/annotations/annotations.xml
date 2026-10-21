@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+  <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Common.xml">
+    <edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="Common"/>
+  </edmx:Reference>
+  <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/UI.xml">
+    <edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI"/>
+  </edmx:Reference>
+  <edmx:DataServices>
+    <Schema Namespace="itam.assets.annotations" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <Annotations Target="AssetUserService.Assets">
+        <Annotation Term="UI.HeaderInfo">
+          <Record Type="UI.HeaderInfoType">
+            <PropertyValue Property="TypeName" String="Asset"/>
+            <PropertyValue Property="TypeNamePlural" String="Assets"/>
+            <PropertyValue Property="Title">
+              <Record Type="UI.DataField">
+                <PropertyValue Property="Value" Path="assetTag"/>
+              </Record>
+            </PropertyValue>
+            <PropertyValue Property="Description">
+              <Record Type="UI.DataField">
+                <PropertyValue Property="Value" Path="model"/>
+              </Record>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="UI.LineItem">
+          <Collection>
+            <Record Type="UI.DataField"><PropertyValue Property="Label" String="Asset Tag"/><PropertyValue Property="Value" Path="assetTag"/></Record>
+            <Record Type="UI.DataField"><PropertyValue Property="Label" String="Serial Number"/><PropertyValue Property="Value" Path="serialNumber"/></Record>
+            <Record Type="UI.DataField"><PropertyValue Property="Label" String="Model"/><PropertyValue Property="Value" Path="model"/></Record>
+            <Record Type="UI.DataField"><PropertyValue Property="Label" String="Purchase Date"/><PropertyValue Property="Value" Path="purchaseDate"/></Record>
+            <Record Type="UI.DataField"><PropertyValue Property="Label" String="Status"/><PropertyValue Property="Value" Path="status"/></Record>
+          </Collection>
+        </Annotation>
+        <Annotation Term="UI.SelectionFields">
+          <Collection>
+            <PropertyPath>assetTag</PropertyPath>
+            <PropertyPath>serialNumber</PropertyPath>
+            <PropertyPath>status</PropertyPath>
+            <PropertyPath>purchaseDate</PropertyPath>
+          </Collection>
+        </Annotation>
+        <Annotation Term="UI.Facets">
+          <Collection>
+            <Record Type="UI.ReferenceFacet">
+              <PropertyValue Property="Label" String="Asset Details"/>
+              <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#AssetDetails"/>
+            </Record>
+          </Collection>
+        </Annotation>
+        <Annotation Term="UI.FieldGroup" Qualifier="AssetDetails">
+          <Record>
+            <PropertyValue Property="Data">
+              <Collection>
+                <Record Type="UI.DataField"><PropertyValue Property="Label" String="Asset Tag"/><PropertyValue Property="Value" Path="assetTag"/></Record>
+                <Record Type="UI.DataField"><PropertyValue Property="Label" String="Serial Number"/><PropertyValue Property="Value" Path="serialNumber"/></Record>
+                <Record Type="UI.DataField"><PropertyValue Property="Label" String="Model"/><PropertyValue Property="Value" Path="model"/></Record>
+                <Record Type="UI.DataField"><PropertyValue Property="Label" String="Purchase Date"/><PropertyValue Property="Value" Path="purchaseDate"/></Record>
+                <Record Type="UI.DataField"><PropertyValue Property="Label" String="Warranty Expiry"/><PropertyValue Property="Value" Path="warrantyExpiry"/></Record>
+                <Record Type="UI.DataField"><PropertyValue Property="Label" String="Status"/><PropertyValue Property="Value" Path="status"/></Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+      </Annotations>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>
