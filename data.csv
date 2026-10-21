@@ -1,0 +1,13 @@
+assetTag,serialNumber,model,category,vendor,purchaseDate,purchaseCostINR,warrantyExpiry,status,currentHolderEmployeeNumber,location,recordStatus
+AST-1001,SN-DELL-001,Dell Latitude 5440,Laptop,Dell Technologies,2025-01-15,68500,2028-01-14,AVAILABLE,,Hyderabad,Active
+AST-1002,SN-HP-002,HP ProBook 440 G10,Laptop,HP,2025-02-03,62400,2028-02-02,ASSIGNED,EMP-1001,Hyderabad,Active
+AST-1003,SN-LEN-003,Lenovo ThinkPad E14,Laptop,Lenovo,2024-11-20,59800,2027-11-19,MAINTENANCE,,Bengaluru,Active
+AST-1004,SN-HP-004,HP EliteBook 840,Laptop,HP,2024-08-12,81500,2027-08-11,ASSIGNED,EMP-1002,Hyderabad,Active
+AST-1005,SN-DELL-005,Dell OptiPlex 7010,Desktop,Dell Technologies,2024-06-05,72000,2027-06-04,AVAILABLE,,Chennai,Active
+AST-1006,SN-LG-006,LG 24-inch Monitor,Monitor,LG,2025-03-18,12400,2027-03-17,ASSIGNED,EMP-1003,Bengaluru,Active
+AST-1007,SN-LOG-007,Logitech C920 Webcam,Accessory,Logitech,2025-04-02,6500,2026-04-01,AVAILABLE,,Hyderabad,Active
+AST-1008,SN-DELL-008,Dell Latitude 5430,Laptop,Dell Technologies,2023-09-14,57900,2026-09-13,RETIRED,,Chennai,Retired
+AST-1009,SN-CAN-009,Canon imageCLASS Printer,Printer,Canon,2024-12-10,28500,2026-12-09,MAINTENANCE,,Hyderabad,Active
+AST-1010,SN-LEN-010,Lenovo ThinkCentre M70,Desktop,Lenovo,2025-05-22,66400,2028-05-21,ASSIGNED,EMP-1004,Pune,Active
+AST-1011,SN-APPLE-011,Apple MacBook Air M3,Laptop,Apple,2025-06-10,109900,2028-06-09,ASSIGNED,EMP-1005,Hyderabad,Active
+AST-1012,SN-SAM-012,Samsung 27-inch Monitor,Monitor,Samsung,2024-10-01,18900,2026-09-30,AVAILABLE,,Bengaluru,Active
