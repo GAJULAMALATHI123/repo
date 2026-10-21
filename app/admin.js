@@ -11,7 +11,7 @@ async function reviewRequest(requestID, decision, button) {
       body: JSON.stringify({ requestID, decision, notes: decision === 'APPROVE' ? 'Approved by Admin.' : 'Rejected by Admin.' })
     });
     if (!response.ok) throw new Error((await response.text()).slice(0, 240) || 'Review action failed.');
-    status.textContent = 'Request ' + decision.toLowerCase() + 'd successfully.';
+    status.textContent = 'Request ' + (decision === 'APPROVE' ? 'approved' : 'rejected') + ' successfully.';
     await loadAdminDashboard();
   } catch (error) {
     status.textContent = 'Could not update request: ' + (error.message || 'Check the CAP service and Admin role.');
