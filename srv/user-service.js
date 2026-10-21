@@ -65,6 +65,11 @@ module.exports = class AssetUserService extends cds.ApplicationService {
       const tx = cds.tx(req);
       const asset = await tx.run(SELECT.one.from(Assets).where({ ID: assetID }));
       if (!asset) return req.reject(404, 'The selected asset was not found.');
+      const employee = await findCurrentEmployee(req);
+      if (!employee) return req.reject(403, 'Your login is not linked to an employee record.');
+      if (asset.currentHolder_ID !== employee.ID) {
+        return req.reject(403, 'You can only request maintenance for an asset currently assigned to you.');
+      }
       if (['RETIRED', 'ARCHIVED'].includes(asset.status)) {
         return req.reject(400, 'Maintenance cannot be requested for a retired or archived asset.');
       }
