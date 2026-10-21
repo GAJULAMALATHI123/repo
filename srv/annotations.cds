@@ -1,5 +1,5 @@
 using AssetAdminService from './asset-service';
-using AssetManagerService from './asset-service';
+using AssetManagerService from './manager-service';
 using AssetUserService from './asset-service';
 
 annotate AssetAdminService.Assets with @(
