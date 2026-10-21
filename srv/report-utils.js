@@ -72,7 +72,9 @@ async function getReportData(req, input = req.data) {
           ? ['Type: ' + clean(item.type), 'Outcome: ' + clean(item.outcome), 'Cost: ' + clean(item.cost)].filter(x => !x.endsWith(': ')).join('; ')
           : ['Expected return: ' + clean(item.expectedReturnDate), 'Actual return: ' + clean(item.actualReturnDate)].filter(x => !x.endsWith(': ')).join('; ')
     });
-    if (rows.length >= 1000) break;
+  }
+  if (rows.length > 1000) {
+    throw Object.assign(new Error('This report contains more than 1,000 records. Apply filters to narrow the report before exporting.'), { statusCode: 413 });
   }
   return rows;
 }
