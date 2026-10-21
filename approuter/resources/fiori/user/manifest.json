@@ -49,21 +49,8 @@
         }
       }
     },
-    "rootView": {
-      "viewName": "itam.fiori.user.App",
-      "type": "XML",
-      "id": "App",
-      "async": true
-    },
     "routing": {
-      "config": {
-        "routerClass": "sap.f.routing.Router",
-        "viewType": "XML",
-        "viewPath": "itam.fiori.user",
-        "controlId": "app",
-        "controlAggregation": "pages",
-        "async": true
-      },
+      "config": {},
       "routes": [
         {
           "pattern": "",
@@ -88,7 +75,6 @@
           "name": "sap.fe.templates.ListReport",
           "options": {
             "settings": {
-              "entitySet": "Assets",
               "contextPath": "/Assets",
               "variantManagement": "Page"
             }
@@ -100,7 +86,6 @@
           "name": "sap.fe.templates.ListReport",
           "options": {
             "settings": {
-              "entitySet": "MaintenanceRequests",
               "contextPath": "/MaintenanceRequests",
               "variantManagement": "Page"
             }
