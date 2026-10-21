@@ -30,3 +30,12 @@ test('production CAP authentication uses XSUAA', () => {
   const devConfig = JSON.parse(fs.readFileSync(path.join(root, '.cdsrc.json'), 'utf8'));
   assert.equal(devConfig.requires.auth['[development]'].kind, 'mocked');
 });
+
+
+test('user maintenance service validates priority and asset ownership', () => {
+  const userService = fs.readFileSync(path.join(root, 'srv', 'user-service.js'), 'utf8');
+  assert.match(userService, /toUpperCase\(\)/);
+  assert.match(userService, /LOW.*MEDIUM.*HIGH.*URGENT/);
+  assert.match(userService, /currently assigned to you/);
+  assert.match(userService, /findCurrentEmployee/);
+});
