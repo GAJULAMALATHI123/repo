@@ -58,9 +58,19 @@
           "target": "Assets"
         },
         {
+          "pattern": "Assets({key}):?query:",
+          "name": "AssetsObjectPage",
+          "target": "AssetsObjectPage"
+        },
+        {
           "pattern": "assets",
           "name": "Assets",
           "target": "Assets"
+        },
+        {
+          "pattern": "Assets({key}):?query:",
+          "name": "AssetsObjectPage",
+          "target": "AssetsObjectPage"
         },
         {
           "pattern": "requests",
@@ -68,9 +78,19 @@
           "target": "MaintenanceRequests"
         },
         {
+          "pattern": "MaintenanceRequests({key}):?query:",
+          "name": "MaintenanceRequestsObjectPage",
+          "target": "MaintenanceRequestsObjectPage"
+        },
+        {
           "pattern": "maintenance",
           "name": "MaintenanceRecords",
           "target": "MaintenanceRecords"
+        },
+        {
+          "pattern": "MaintenanceRecords({key}):?query:",
+          "name": "MaintenanceRecordsObjectPage",
+          "target": "MaintenanceRecordsObjectPage"
         },
         {
           "pattern": "assignments",
@@ -78,14 +98,29 @@
           "target": "AssetAssignments"
         },
         {
+          "pattern": "AssetAssignments({key}):?query:",
+          "name": "AssetAssignmentsObjectPage",
+          "target": "AssetAssignmentsObjectPage"
+        },
+        {
           "pattern": "employees",
           "name": "Employees",
           "target": "Employees"
         },
         {
+          "pattern": "Employees({key}):?query:",
+          "name": "EmployeesObjectPage",
+          "target": "EmployeesObjectPage"
+        },
+        {
           "pattern": "ledger",
           "name": "OwnershipLedgers",
           "target": "OwnershipLedgers"
+        },
+        {
+          "pattern": "OwnershipLedgers({key}):?query:",
+          "name": "OwnershipLedgersObjectPage",
+          "target": "OwnershipLedgersObjectPage"
         }
       ],
       "targets": {
@@ -96,7 +131,14 @@
           "options": {
             "settings": {
               "contextPath": "/Assets",
-              "variantManagement": "Page"
+              "variantManagement": "Page",
+              "navigation": {
+                "Assets": {
+                  "detail": {
+                    "route": "AssetsObjectPage"
+                  }
+                }
+              }
             }
           }
         },
@@ -107,7 +149,14 @@
           "options": {
             "settings": {
               "contextPath": "/MaintenanceRequests",
-              "variantManagement": "Page"
+              "variantManagement": "Page",
+              "navigation": {
+                "MaintenanceRequests": {
+                  "detail": {
+                    "route": "MaintenanceRequestsObjectPage"
+                  }
+                }
+              }
             }
           }
         },
@@ -118,7 +167,14 @@
           "options": {
             "settings": {
               "contextPath": "/MaintenanceRecords",
-              "variantManagement": "Page"
+              "variantManagement": "Page",
+              "navigation": {
+                "MaintenanceRecords": {
+                  "detail": {
+                    "route": "MaintenanceRecordsObjectPage"
+                  }
+                }
+              }
             }
           }
         },
@@ -129,7 +185,14 @@
           "options": {
             "settings": {
               "contextPath": "/AssetAssignments",
-              "variantManagement": "Page"
+              "variantManagement": "Page",
+              "navigation": {
+                "AssetAssignments": {
+                  "detail": {
+                    "route": "AssetAssignmentsObjectPage"
+                  }
+                }
+              }
             }
           }
         },
@@ -140,7 +203,14 @@
           "options": {
             "settings": {
               "contextPath": "/Employees",
-              "variantManagement": "Page"
+              "variantManagement": "Page",
+              "navigation": {
+                "Employees": {
+                  "detail": {
+                    "route": "EmployeesObjectPage"
+                  }
+                }
+              }
             }
           }
         },
@@ -151,7 +221,74 @@
           "options": {
             "settings": {
               "contextPath": "/OwnershipLedgers",
-              "variantManagement": "Page"
+              "variantManagement": "Page",
+              "navigation": {
+                "OwnershipLedgers": {
+                  "detail": {
+                    "route": "OwnershipLedgersObjectPage"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "AssetsObjectPage": {
+          "type": "Component",
+          "id": "AssetsObjectPage",
+          "name": "sap.fe.templates.ObjectPage",
+          "options": {
+            "settings": {
+              "contextPath": "/Assets"
+            }
+          }
+        },
+        "MaintenanceRequestsObjectPage": {
+          "type": "Component",
+          "id": "MaintenanceRequestsObjectPage",
+          "name": "sap.fe.templates.ObjectPage",
+          "options": {
+            "settings": {
+              "contextPath": "/MaintenanceRequests"
+            }
+          }
+        },
+        "MaintenanceRecordsObjectPage": {
+          "type": "Component",
+          "id": "MaintenanceRecordsObjectPage",
+          "name": "sap.fe.templates.ObjectPage",
+          "options": {
+            "settings": {
+              "contextPath": "/MaintenanceRecords"
+            }
+          }
+        },
+        "AssetAssignmentsObjectPage": {
+          "type": "Component",
+          "id": "AssetAssignmentsObjectPage",
+          "name": "sap.fe.templates.ObjectPage",
+          "options": {
+            "settings": {
+              "contextPath": "/AssetAssignments"
+            }
+          }
+        },
+        "EmployeesObjectPage": {
+          "type": "Component",
+          "id": "EmployeesObjectPage",
+          "name": "sap.fe.templates.ObjectPage",
+          "options": {
+            "settings": {
+              "contextPath": "/Employees"
+            }
+          }
+        },
+        "OwnershipLedgersObjectPage": {
+          "type": "Component",
+          "id": "OwnershipLedgersObjectPage",
+          "name": "sap.fe.templates.ObjectPage",
+          "options": {
+            "settings": {
+              "contextPath": "/OwnershipLedgers"
             }
           }
         }
