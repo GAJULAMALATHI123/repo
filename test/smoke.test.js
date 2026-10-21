@@ -26,9 +26,12 @@ test('XSUAA role templates are defined', () => {
 
 test('production CAP authentication uses XSUAA', () => {
   const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
-  assert.equal(pkg.cds.requires.auth.kind, 'xsuaa');
+  assert.equal(pkg.cds.requires.auth['[production]'].kind, 'xsuaa');
+  assert.equal(pkg.cds.requires.db['[production]'].kind, 'hana');
+  assert.equal(pkg.dependencies['@cap-js/hana'] !== undefined, true);
   const devConfig = JSON.parse(fs.readFileSync(path.join(root, '.cdsrc.json'), 'utf8'));
   assert.equal(devConfig.requires.auth['[development]'].kind, 'mocked');
+  assert.equal(devConfig.requires.db['[development]'].kind, 'sqlite');
 });
 
 
