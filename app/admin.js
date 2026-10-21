@@ -4,10 +4,18 @@ async function reviewRequest(requestID, decision, button) {
   buttons.forEach((item) => { item.disabled = true; });
   status.textContent = decision === 'APPROVE' ? 'Approving request…' : 'Rejecting request…';
   try {
+    const csrfResponse = await fetch('/admin/MaintenanceRequests?$top=0', {
+      method: 'GET',
+      credentials: 'same-origin',
+      headers: { 'X-CSRF-Token': 'Fetch', Accept: 'application/json' }
+    });
+    if (!csrfResponse.ok) throw new Error('Could not prepare a secure review (HTTP ' + csrfResponse.status + ').');
+    const csrfToken = csrfResponse.headers.get('X-CSRF-Token');
+    if (!csrfToken) throw new Error('The CAP service did not return a CSRF token.');
     const response = await fetch('/admin/reviewMaintenanceRequest', {
       method: 'POST',
       credentials: 'same-origin',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-CSRF-Token': csrfToken },
       body: JSON.stringify({ requestID, decision, notes: decision === 'APPROVE' ? 'Approved by Admin.' : 'Rejected by Admin.' })
     });
     if (!response.ok) throw new Error((await response.text()).slice(0, 240) || 'Review action failed.');
