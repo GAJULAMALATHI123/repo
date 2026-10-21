@@ -12,6 +12,7 @@ service AssetAdminService {
   entity OwnershipLedgers    as projection on itam.OwnershipLedgers;
   entity MaintenanceRecords  as projection on itam.MaintenanceRecords;
   entity MaintenanceRequests as projection on itam.MaintenanceRequests;
+  entity ArchiveRecords      as projection on itam.ArchiveRecords;
 
   action assignAsset(assetID: UUID, employeeID: UUID, assignedDate: Date, expectedReturnDate: Date) returns String;
   action transferAsset(assetID: UUID, employeeID: UUID, transitionDate: Date) returns String;
