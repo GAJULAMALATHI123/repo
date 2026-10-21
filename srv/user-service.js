@@ -6,12 +6,19 @@ module.exports = class AssetUserService extends cds.ApplicationService {
     const { Assets, AssetAssignments, OwnershipLedgers, MaintenanceRequests } = this.entities;
     const Employees = cds.entities('itam.Employees');
 
-    // Resolve the signed-in user's employee record by email/identity.
+    // Match the signed-in identity to an employee using email first, then username/ID.
+    // Employee.email should contain the same email address configured for the user's IAS/XSUAA identity.
     const findCurrentEmployee = async (req) => {
-      const userId = req.user?.id;
-      if (!userId || !Employees) return null;
+      if (!req.user || !Employees) return null;
+      const attrs = req.user.attr || {};
+      const candidates = [...new Set([attrs.email, attrs.user_name, req.user.id].filter(Boolean).map(value => String(value).trim()))];
+      if (!candidates.length) return null;
       const tx = cds.tx(req);
-      return tx.run(SELECT.one.from(Employees).where({ email: userId }));
+      for (const email of candidates) {
+        const employee = await tx.run(SELECT.one.from(Employees).where({ email }));
+        if (employee) return employee;
+      }
+      return null;
     };
 
     // Users may only read assets currently assigned to their employee record.
@@ -26,6 +33,11 @@ module.exports = class AssetUserService extends cds.ApplicationService {
       const employee = await findCurrentEmployee(req);
       if (!employee) return req.reject(403, 'Your login is not linked to an employee record.');
       req.query.where({ employee_ID: employee.ID });
+    });
+
+    // Users may submit requests but cannot edit or delete them after submission.
+    this.before(['UPDATE', 'DELETE'], MaintenanceRequests, (req) => {
+      return req.reject(403, 'Maintenance requests cannot be edited or deleted by users after submission.');
     });
 
     // Users may only read maintenance requests they submitted themselves.
