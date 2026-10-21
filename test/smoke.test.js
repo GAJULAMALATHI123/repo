@@ -122,3 +122,35 @@ test('Admin lifecycle handlers validate unique assets and retirement transitions
     assert.match(adminService, new RegExp("this\\.on\\('" + action + "'"));
   }
 });
+
+test('FR-022 to FR-024 report actions are declared for Admin and Manager', () => {
+  const service = fs.readFileSync(path.join(root, 'srv', 'asset-service.cds'), 'utf8');
+  for (const role of ['AssetAdminService', 'AssetManagerService']) {
+    const start = service.indexOf('service ' + role);
+    assert.notEqual(start, -1);
+    const end = service.indexOf('\n}', start);
+    const block = service.slice(start, end);
+    assert.match(block, /action getReportData\(/);
+    assert.match(block, /action generateReport\(/);
+    assert.match(block, /action emailReport\(/);
+  }
+});
+
+test('Report export includes PDF metadata, filters, recipient validation and role pages', () => {
+  const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
+  const utils = fs.readFileSync(path.join(root, 'srv', 'report-utils.js'), 'utf8');
+  const client = fs.readFileSync(path.join(root, 'approuter', 'resources', 'report-center.js'), 'utf8');
+  assert.ok(pkg.dependencies.pdfkit);
+  assert.ok(pkg.dependencies.nodemailer);
+  assert.match(utils, /application\/pdf/);
+  assert.match(utils, /Selected filters/);
+  assert.match(utils, /SMTP_HOST/);
+  assert.match(utils, /valid recipient email addresses/);
+  assert.match(client, /PDF signature/);
+  assert.match(client, /Preview the current filters before downloading/);
+  for (const role of ['admin', 'manager']) {
+    const page = fs.readFileSync(path.join(root, 'approuter', 'resources', 'fiori', role, 'reports.html'), 'utf8');
+    assert.match(page, /Download PDF/);
+    assert.match(page, /Email PDF report/);
+  }
+});
