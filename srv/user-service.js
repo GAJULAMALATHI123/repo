@@ -39,6 +39,15 @@ module.exports = class AssetUserService extends cds.ApplicationService {
       if (!req.data.asset_ID) req.error(400, 'Choose an asset for the maintenance request.');
       if (!req.data.issueType) req.error(400, 'Choose an issue type.');
       if (!req.data.description?.trim()) req.error(400, 'Describe the issue before submitting.');
+      const employee = await findCurrentEmployee(req);
+      if (!employee) return req.reject(403, 'Your login is not linked to an employee record.');
+      const tx = cds.tx(req);
+      const asset = req.data.asset_ID
+        ? await tx.run(SELECT.one.from(Assets).where({ ID: req.data.asset_ID }))
+        : null;
+      if (!asset || asset.currentHolder_ID !== employee.ID) {
+        return req.reject(403, 'You can only request maintenance for an asset currently assigned to you.');
+      }
       if (!['LOW', 'MEDIUM', 'HIGH', 'URGENT'].includes(req.data.priority || 'MEDIUM')) {
         req.error(400, 'Priority must be LOW, MEDIUM, HIGH, or URGENT.');
       }
