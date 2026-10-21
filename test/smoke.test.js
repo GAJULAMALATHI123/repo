@@ -22,3 +22,11 @@ test('XSUAA role templates are defined', () => {
   const names = security['role-templates'].map(role => role.name);
   assert.deepEqual(names, ['Admin', 'Manager', 'User']);
 });
+
+
+test('production CAP authentication uses XSUAA', () => {
+  const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
+  assert.equal(pkg.cds.requires.auth.kind, 'xsuaa');
+  const devConfig = JSON.parse(fs.readFileSync(path.join(root, '.cdsrc.json'), 'utf8'));
+  assert.equal(devConfig.requires.auth['[development]'].kind, 'mocked');
+});
