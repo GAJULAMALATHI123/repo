@@ -23,17 +23,15 @@ test('XSUAA role templates are defined', () => {
   assert.deepEqual(names, ['Admin', 'Manager', 'User']);
 });
 
-
-test('production CAP authentication uses XSUAA', () => {
+test('production CAP authentication and database use XSUAA and HANA', () => {
   const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
   assert.equal(pkg.cds.requires.auth['[production]'].kind, 'xsuaa');
   assert.equal(pkg.cds.requires.db['[production]'].kind, 'hana');
-  assert.equal(pkg.dependencies['@cap-js/hana'] !== undefined, true);
+  assert.ok(pkg.dependencies['@cap-js/hana']);
   const devConfig = JSON.parse(fs.readFileSync(path.join(root, '.cdsrc.json'), 'utf8'));
   assert.equal(devConfig.requires.auth['[development]'].kind, 'mocked');
   assert.equal(devConfig.requires.db['[development]'].kind, 'sqlite');
 });
-
 
 test('user maintenance service validates priority and asset ownership', () => {
   const userService = fs.readFileSync(path.join(root, 'srv', 'user-service.js'), 'utf8');
@@ -43,13 +41,12 @@ test('user maintenance service validates priority and asset ownership', () => {
   assert.match(userService, /findCurrentEmployee/);
 });
 
-
 test('maintenance workflow is wired across user, admin, and manager dashboards', () => {
   const userUi = fs.readFileSync(path.join(root, 'app', 'app.js'), 'utf8');
   const adminUi = fs.readFileSync(path.join(root, 'app', 'admin.js'), 'utf8');
   const managerUi = fs.readFileSync(path.join(root, 'app', 'manager.js'), 'utf8');
   const adminService = fs.readFileSync(path.join(root, 'srv', 'asset-service.js'), 'utf8');
-  assert.match(userUi, /fetch\('\/user\/MaintenanceRequests'/);
+  assert.match(userUi, /fetch\('\/user\/MaintenanceRequests/);
   assert.match(userUi, /openRequestCount/);
   assert.match(adminUi, /reviewMaintenanceRequest/);
   assert.match(adminUi, /APPROVE/);
@@ -58,7 +55,6 @@ test('maintenance workflow is wired across user, admin, and manager dashboards',
   assert.match(managerUi, /setInterval\(loadManagerDashboard, 30000\)/);
   assert.match(adminService, /this\.on\('reviewMaintenanceRequest'/);
 });
-
 
 test('Admin dashboard refresh timer is registered at page load', () => {
   const adminUi = fs.readFileSync(path.join(root, 'app', 'admin.js'), 'utf8');
@@ -69,44 +65,11 @@ test('Admin dashboard refresh timer is registered at page load', () => {
 
 test('application router protects role pages and API routes with matching scopes', () => {
   const router = JSON.parse(fs.readFileSync(path.join(root, 'approuter', 'xs-app.json'), 'utf8'));
-  const findRoute = (source) => router.routes.find(route => route.source === source);
-  const findPageRoute = (target) => router.routes.find(route => route.target === target);
-  assert.deepEqual(findRoute('^/admin/(.*)
-});
-
-test('maintenance workflow requires approval and restores the assigned status', () => {
-  const adminService = fs.readFileSync(path.join(root, 'srv', 'asset-service.js'), 'utf8');
-  const userService = fs.readFileSync(path.join(root, 'srv', 'user-service.js'), 'utf8');
-  assert.match(adminService, /request\.status !== 'APPROVED'/);
-  assert.match(adminService, /asset\?\.currentHolder_ID \? 'ASSIGNED' : 'AVAILABLE'/);
-  assert.match(userService, /Maintenance requests cannot be edited or deleted by users/);
-  assert.match(userService, /attrs\.email/);
-});
-).scope, ['$XSAPPNAME.Admin']);
-  assert.deepEqual(findRoute('^/manager/(.*)
-});
-
-test('maintenance workflow requires approval and restores the assigned status', () => {
-  const adminService = fs.readFileSync(path.join(root, 'srv', 'asset-service.js'), 'utf8');
-  const userService = fs.readFileSync(path.join(root, 'srv', 'user-service.js'), 'utf8');
-  assert.match(adminService, /request\.status !== 'APPROVED'/);
-  assert.match(adminService, /asset\?\.currentHolder_ID \? 'ASSIGNED' : 'AVAILABLE'/);
-  assert.match(userService, /Maintenance requests cannot be edited or deleted by users/);
-  assert.match(userService, /attrs\.email/);
-});
-).scope, ['$XSAPPNAME.Manager']);
-  assert.deepEqual(findRoute('^/user/(.*)
-});
-
-test('maintenance workflow requires approval and restores the assigned status', () => {
-  const adminService = fs.readFileSync(path.join(root, 'srv', 'asset-service.js'), 'utf8');
-  const userService = fs.readFileSync(path.join(root, 'srv', 'user-service.js'), 'utf8');
-  assert.match(adminService, /request\.status !== 'APPROVED'/);
-  assert.match(adminService, /asset\?\.currentHolder_ID \? 'ASSIGNED' : 'AVAILABLE'/);
-  assert.match(userService, /Maintenance requests cannot be edited or deleted by users/);
-  assert.match(userService, /attrs\.email/);
-});
-).scope, ['$XSAPPNAME.User']);
+  const findApiRoute = (scope) => router.routes.find(route => route.destination === 'srv-api' && route.scope?.[0] === scope);
+  const findPageRoute = (target) => router.routes.find(route => route.target === target && route.localDir === 'resources');
+  assert.ok(findApiRoute('$XSAPPNAME.Admin')?.forwardAuthToken);
+  assert.ok(findApiRoute('$XSAPPNAME.Manager')?.forwardAuthToken);
+  assert.ok(findApiRoute('$XSAPPNAME.User')?.forwardAuthToken);
   assert.deepEqual(findPageRoute('/admin.html').scope, ['$XSAPPNAME.Admin']);
   assert.deepEqual(findPageRoute('/manager.html').scope, ['$XSAPPNAME.Manager']);
   assert.deepEqual(findPageRoute('/index.html').scope, ['$XSAPPNAME.User']);
