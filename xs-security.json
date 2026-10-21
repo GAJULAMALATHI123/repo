@@ -1,0 +1,14 @@
+{
+  "xsappname": "it-asset-lifecycle-manager",
+  "tenant-mode": "dedicated",
+  "scopes": [
+    { "name": "$XSAPPNAME.Admin", "description": "IT Asset Lifecycle Administrator" },
+    { "name": "$XSAPPNAME.Manager", "description": "IT Asset Lifecycle Manager" },
+    { "name": "$XSAPPNAME.User", "description": "IT Asset Lifecycle User" }
+  ],
+  "role-templates": [
+    { "name": "Admin", "description": "Manage assets and master data", "scope-references": ["$XSAPPNAME.Admin"] },
+    { "name": "Manager", "description": "View authorized dashboards, reports, and maintenance information", "scope-references": ["$XSAPPNAME.Manager"] },
+    { "name": "User", "description": "Read permitted asset data and submit maintenance requests", "scope-references": ["$XSAPPNAME.User"] }
+  ]
+}
