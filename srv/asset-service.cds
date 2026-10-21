@@ -1,5 +1,24 @@
 using itam from '../db/schema';
 
+type ReportRow {
+  assetTag     : String(50);
+  serialNumber : String(100);
+  model        : String(120);
+  category     : String(100);
+  status       : String(40);
+  owner        : String(120);
+  location     : String(120);
+  date         : String(40);
+  details      : String(500);
+}
+
+type ReportFile {
+  fileName    : String(255);
+  contentType : String(100);
+  generatedAt : Timestamp;
+  base64      : LargeString;
+}
+
 @path: '/admin'
 @requires: 'Admin'
 service AssetAdminService {
@@ -22,6 +41,9 @@ service AssetAdminService {
   action retireAsset(assetID: UUID, reason: String, retirementDate: Date) returns String;
   action archiveAsset(assetID: UUID, reason: String, disposalMethod: String) returns String;
   action reviewMaintenanceRequest(requestID: UUID, decision: String, notes: String) returns String;
+  action getReportData(reportType: String, status: String, categoryID: UUID, location: String, dateFrom: Date, dateTo: Date) returns many ReportRow;
+  action generateReport(reportType: String, status: String, categoryID: UUID, location: String, dateFrom: Date, dateTo: Date) returns ReportFile;
+  action emailReport(reportType: String, status: String, categoryID: UUID, location: String, dateFrom: Date, dateTo: Date, recipients: String) returns String;
 }
 
 @path: '/manager'
@@ -36,6 +58,9 @@ service AssetManagerService {
   @readonly entity OwnershipLedgers    as projection on itam.OwnershipLedgers;
   @readonly entity MaintenanceRecords  as projection on itam.MaintenanceRecords;
   @readonly entity MaintenanceRequests as projection on itam.MaintenanceRequests;
+  action getReportData(reportType: String, status: String, categoryID: UUID, location: String, dateFrom: Date, dateTo: Date) returns many ReportRow;
+  action generateReport(reportType: String, status: String, categoryID: UUID, location: String, dateFrom: Date, dateTo: Date) returns ReportFile;
+  action emailReport(reportType: String, status: String, categoryID: UUID, location: String, dateFrom: Date, dateTo: Date, recipients: String) returns String;
 }
 
 @path: '/user'
