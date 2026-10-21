@@ -48,10 +48,10 @@ module.exports = class AssetUserService extends cds.ApplicationService {
       if (!asset || asset.currentHolder_ID !== employee.ID) {
         return req.reject(403, 'You can only request maintenance for an asset currently assigned to you.');
       }
-      if (!['LOW', 'MEDIUM', 'HIGH', 'URGENT'].includes(req.data.priority || 'MEDIUM')) {
-        req.error(400, 'Priority must be LOW, MEDIUM, HIGH, or URGENT.');
+      req.data.priority = String(req.data.priority || 'MEDIUM').toUpperCase();
+      if (!['LOW', 'MEDIUM', 'HIGH', 'URGENT'].includes(req.data.priority)) {
+        return req.reject(400, 'Priority must be LOW, MEDIUM, HIGH, or URGENT.');
       }
-      req.data.priority ||= 'MEDIUM';
       req.data.status = 'SUBMITTED';
       req.data.submittedAt ||= new Date().toISOString();
       req.data.requestedBy = req.user?.id || 'authenticated-user';
