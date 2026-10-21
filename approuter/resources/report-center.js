@@ -116,7 +116,7 @@
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url; link.download = file.fileName || 'asset-report.pdf';
-      document.body.appendChild(link); link.click(); link.remove(); URL.revokeObjectURL(url);
+      document.body.appendChild(link); link.click(); link.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
       setStatus('PDF generated and download started. Preview row count: ' + lastRows.length + '.');
     } catch (error) { setStatus(error.message || 'PDF download failed.', true); }
     finally { button.disabled = false; }
