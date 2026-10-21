@@ -58,3 +58,31 @@ test('maintenance workflow is wired across user, admin, and manager dashboards',
   assert.match(managerUi, /setInterval\(loadManagerDashboard, 30000\)/);
   assert.match(adminService, /this\.on\('reviewMaintenanceRequest'/);
 });
+
+
+test('Admin dashboard refresh timer is registered at page load', () => {
+  const adminUi = fs.readFileSync(path.join(root, 'app', 'admin.js'), 'utf8');
+  const reviewBlock = adminUi.slice(0, adminUi.indexOf('async function getRows'));
+  assert.equal(reviewBlock.includes('setInterval(loadAdminDashboard, 30000)'), false);
+  assert.match(adminUi, /loadAdminDashboard\(\);\s*setInterval\(loadAdminDashboard, 30000\);\s*$/);
+});
+
+test('application router protects role pages and API routes with matching scopes', () => {
+  const router = JSON.parse(fs.readFileSync(path.join(root, 'approuter', 'xs-app.json'), 'utf8'));
+  const findRoute = (source) => router.routes.find(route => route.source === source);
+  assert.deepEqual(findRoute('^/admin/(.*)$').scope, ['$XSAPPNAME.Admin']);
+  assert.deepEqual(findRoute('^/manager/(.*)$').scope, ['$XSAPPNAME.Manager']);
+  assert.deepEqual(findRoute('^/user/(.*)$').scope, ['$XSAPPNAME.User']);
+  assert.deepEqual(findRoute('^/admin\\\\.html$').scope, ['$XSAPPNAME.Admin']);
+  assert.deepEqual(findRoute('^/manager\\\\.html$').scope, ['$XSAPPNAME.Manager']);
+  assert.deepEqual(findRoute('^/index\\\\.html$').scope, ['$XSAPPNAME.User']);
+});
+
+test('maintenance workflow requires approval and restores the assigned status', () => {
+  const adminService = fs.readFileSync(path.join(root, 'srv', 'asset-service.js'), 'utf8');
+  const userService = fs.readFileSync(path.join(root, 'srv', 'user-service.js'), 'utf8');
+  assert.match(adminService, /request\.status !== 'APPROVED'/);
+  assert.match(adminService, /asset\?\.currentHolder_ID \? 'ASSIGNED' : 'AVAILABLE'/);
+  assert.match(userService, /Maintenance requests cannot be edited or deleted by users/);
+  assert.match(userService, /attrs\.email/);
+});
