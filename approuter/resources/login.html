@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sign in | IT Asset Lifecycle Manager</title><link rel="stylesheet" href="style.css"></head>
+<body><header><strong>IT Asset Lifecycle Manager</strong><span>Secure workspace</span></header><main>
+<section class="welcome"><p class="eyebrow">WELCOME</p><h1>Checking your workspace…</h1><p>Sign-in is handled by SAP BTP. This page checks which workspace your assigned role can access.</p></section>
+<section class="panel" style="margin-top:18px"><p id="message" role="status">Checking your assigned role…</p></section>
+</main><script>
+(async function () {
+  const message = document.getElementById('message');
+  const destinations = [
+    { url: '/admin/$metadata', page: '/admin.html' },
+    { url: '/manager/$metadata', page: '/manager.html' },
+    { url: '/user/$metadata', page: '/index.html' }
+  ];
+  for (const item of destinations) {
+    try {
+      const response = await fetch(item.url, { credentials: 'same-origin', headers: { Accept: 'application/xml' } });
+      if (response.ok) { window.location.replace(item.page); return; }
+    } catch (_) { /* Continue to the next role endpoint. */ }
+  }
+  message.textContent = 'Your account does not have an assigned Admin, Manager, or User role. Ask your SAP BTP administrator to assign the correct role collection, then sign in again.';
+})();
+</script></body></html>
