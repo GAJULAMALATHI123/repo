@@ -9,7 +9,8 @@
       "authenticationType": "xsuaa",
       "scope": [
         "$XSAPPNAME.Admin"
-      ]
+      ],
+      "forwardAuthToken": true
     },
     {
       "source": "^/manager/(.*)$",
@@ -18,7 +19,8 @@
       "authenticationType": "xsuaa",
       "scope": [
         "$XSAPPNAME.Manager"
-      ]
+      ],
+      "forwardAuthToken": true
     },
     {
       "source": "^/user/(.*)$",
@@ -27,7 +29,8 @@
       "authenticationType": "xsuaa",
       "scope": [
         "$XSAPPNAME.User"
-      ]
+      ],
+      "forwardAuthToken": true
     },
     {
       "source": "^/admin\\.html$",
