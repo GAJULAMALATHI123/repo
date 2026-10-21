@@ -59,6 +59,21 @@ async function loadAssets() {
     document.querySelector('#assetsStatus').textContent = assets.length
       ? 'Showing ' + assets.length + ' asset(s) assigned to your account.'
       : 'No asset assignments were found for your account.';
+
+    try {
+      const requestResponse = await fetch('/user/MaintenanceRequests?$select=ID,status', {
+        headers: { Accept: 'application/json' },
+        credentials: 'same-origin'
+      });
+      if (!requestResponse.ok) throw new Error('Could not load maintenance requests');
+      const requestPayload = await requestResponse.json();
+      const requests = requestPayload.value || [];
+      document.querySelector('#openRequestCount').textContent = String(requests.filter((item) => !['RESOLVED', 'REJECTED'].includes(item.status)).length);
+      document.querySelector('#resolvedRequestCount').textContent = String(requests.filter((item) => item.status === 'RESOLVED').length);
+    } catch (requestError) {
+      document.querySelector('#openRequestCount').textContent = '—';
+      document.querySelector('#resolvedRequestCount').textContent = '—';
+    }
   } catch (error) {
     assetSelect.innerHTML = '<option value="">Assets could not be loaded</option>';
     connectionStatus.textContent = 'CAP service is not reachable yet. Start/deploy the CAP service and open this page from the same application host.';
