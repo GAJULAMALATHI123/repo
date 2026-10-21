@@ -3,7 +3,37 @@ const { SELECT, INSERT } = cds.ql;
 
 module.exports = class AssetUserService extends cds.ApplicationService {
   async init() {
-    const { Assets, MaintenanceRequests } = this.entities;
+    const { Assets, AssetAssignments, OwnershipLedgers, MaintenanceRequests } = this.entities;
+    const Employees = cds.entities('itam.Employees');
+
+    // Resolve the signed-in user's employee record by email/identity.
+    const findCurrentEmployee = async (req) => {
+      const userId = req.user?.id;
+      if (!userId || !Employees) return null;
+      const tx = cds.tx(req);
+      return tx.run(SELECT.one.from(Employees).where({ email: userId }));
+    };
+
+    // Users may only read assets currently assigned to their employee record.
+    this.before('READ', Assets, async (req) => {
+      const employee = await findCurrentEmployee(req);
+      if (!employee) return req.reject(403, 'Your login is not linked to an employee record.');
+      req.query.where({ currentHolder_ID: employee.ID });
+    });
+
+    // Users may only read their own assignment records.
+    this.before('READ', AssetAssignments, async (req) => {
+      const employee = await findCurrentEmployee(req);
+      if (!employee) return req.reject(403, 'Your login is not linked to an employee record.');
+      req.query.where({ employee_ID: employee.ID });
+    });
+
+    // Show ledger history only for assets the employee currently holds or held.
+    this.before('READ', OwnershipLedgers, async (req) => {
+      const employee = await findCurrentEmployee(req);
+      if (!employee) return req.reject(403, 'Your login is not linked to an employee record.');
+      req.query.where({ toEmployee_ID: employee.ID });
+    });
 
     this.before('CREATE', MaintenanceRequests, async (req) => {
       if (!req.data.asset_ID) req.error(400, 'Choose an asset for the maintenance request.');
