@@ -33,3 +33,4 @@ async function loadManagerDashboard() {
   }
 }
 loadManagerDashboard();
+setInterval(loadManagerDashboard, 30000);
