@@ -119,11 +119,12 @@ module.exports = class AssetAdminService extends cds.ApplicationService {
         if (!request || request.asset_ID !== assetID) return req.reject(400, 'Maintenance request does not match this asset.');
         if (['RESOLVED', 'REJECTED'].includes(request.status)) return req.reject(400, 'This request is already closed.');
       }
-      const rows = await tx.run(INSERT.into(MaintenanceRecords).entries({
+      const maintenanceID = cds.utils.uuid();
+      await tx.run(INSERT.into(MaintenanceRecords).entries({
+        ID: maintenanceID,
         asset_ID: assetID, type: maintenanceType.trim(),
         reportedDate: new Date().toISOString().slice(0, 10), status: 'IN_PROGRESS'
       }));
-      const maintenanceID = rows?.ID || rows?.[0]?.ID;
       await tx.run(UPDATE(Assets).set({ status: 'UNDER_MAINTENANCE' }).where({ ID: assetID }));
       if (requestID) await tx.run(UPDATE(MaintenanceRequests).set({
         status: 'IN_PROGRESS', reviewedAt: new Date().toISOString(), maintenance_ID: maintenanceID
