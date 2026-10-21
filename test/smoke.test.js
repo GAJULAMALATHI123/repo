@@ -70,12 +70,46 @@ test('Admin dashboard refresh timer is registered at page load', () => {
 test('application router protects role pages and API routes with matching scopes', () => {
   const router = JSON.parse(fs.readFileSync(path.join(root, 'approuter', 'xs-app.json'), 'utf8'));
   const findRoute = (source) => router.routes.find(route => route.source === source);
-  assert.deepEqual(findRoute('^/admin/(.*)$').scope, ['$XSAPPNAME.Admin']);
-  assert.deepEqual(findRoute('^/manager/(.*)$').scope, ['$XSAPPNAME.Manager']);
-  assert.deepEqual(findRoute('^/user/(.*)$').scope, ['$XSAPPNAME.User']);
-  assert.deepEqual(findRoute('^/admin\\\\.html$').scope, ['$XSAPPNAME.Admin']);
-  assert.deepEqual(findRoute('^/manager\\\\.html$').scope, ['$XSAPPNAME.Manager']);
-  assert.deepEqual(findRoute('^/index\\\\.html$').scope, ['$XSAPPNAME.User']);
+  const findPageRoute = (target) => router.routes.find(route => route.target === target);
+  assert.deepEqual(findRoute('^/admin/(.*)
+});
+
+test('maintenance workflow requires approval and restores the assigned status', () => {
+  const adminService = fs.readFileSync(path.join(root, 'srv', 'asset-service.js'), 'utf8');
+  const userService = fs.readFileSync(path.join(root, 'srv', 'user-service.js'), 'utf8');
+  assert.match(adminService, /request\.status !== 'APPROVED'/);
+  assert.match(adminService, /asset\?\.currentHolder_ID \? 'ASSIGNED' : 'AVAILABLE'/);
+  assert.match(userService, /Maintenance requests cannot be edited or deleted by users/);
+  assert.match(userService, /attrs\.email/);
+});
+).scope, ['$XSAPPNAME.Admin']);
+  assert.deepEqual(findRoute('^/manager/(.*)
+});
+
+test('maintenance workflow requires approval and restores the assigned status', () => {
+  const adminService = fs.readFileSync(path.join(root, 'srv', 'asset-service.js'), 'utf8');
+  const userService = fs.readFileSync(path.join(root, 'srv', 'user-service.js'), 'utf8');
+  assert.match(adminService, /request\.status !== 'APPROVED'/);
+  assert.match(adminService, /asset\?\.currentHolder_ID \? 'ASSIGNED' : 'AVAILABLE'/);
+  assert.match(userService, /Maintenance requests cannot be edited or deleted by users/);
+  assert.match(userService, /attrs\.email/);
+});
+).scope, ['$XSAPPNAME.Manager']);
+  assert.deepEqual(findRoute('^/user/(.*)
+});
+
+test('maintenance workflow requires approval and restores the assigned status', () => {
+  const adminService = fs.readFileSync(path.join(root, 'srv', 'asset-service.js'), 'utf8');
+  const userService = fs.readFileSync(path.join(root, 'srv', 'user-service.js'), 'utf8');
+  assert.match(adminService, /request\.status !== 'APPROVED'/);
+  assert.match(adminService, /asset\?\.currentHolder_ID \? 'ASSIGNED' : 'AVAILABLE'/);
+  assert.match(userService, /Maintenance requests cannot be edited or deleted by users/);
+  assert.match(userService, /attrs\.email/);
+});
+).scope, ['$XSAPPNAME.User']);
+  assert.deepEqual(findPageRoute('/admin.html').scope, ['$XSAPPNAME.Admin']);
+  assert.deepEqual(findPageRoute('/manager.html').scope, ['$XSAPPNAME.Manager']);
+  assert.deepEqual(findPageRoute('/index.html').scope, ['$XSAPPNAME.User']);
 });
 
 test('maintenance workflow requires approval and restores the assigned status', () => {
