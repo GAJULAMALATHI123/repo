@@ -15,7 +15,7 @@ module.exports = class AssetUserService extends cds.ApplicationService {
       req.data.priority ||= 'MEDIUM';
       req.data.status = 'SUBMITTED';
       req.data.submittedAt ||= new Date().toISOString();
-      req.data.requestedBy ||= req.user?.id || 'authenticated-user';
+      req.data.requestedBy = req.user?.id || 'authenticated-user';
     });
 
     this.on('submitRequest', 'MaintenanceRequests', async (req) => {
