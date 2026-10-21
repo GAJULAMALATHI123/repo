@@ -11,6 +11,7 @@ async function loadManagerDashboard() {
   const tbody = document.getElementById('managerRequestRows');
   try {
     const [assets, requests] = await Promise.all([getRows('/manager/Assets?$select=ID,assetTag,status'), getRows('/manager/MaintenanceRequests?$select=ID,asset_ID,issueType,priority,status')]);
+    const assetTags = new Map(assets.map(asset => [asset.ID, asset.assetTag || asset.ID]));
     putCount('availableAssets', assets.filter(x => x.status === 'AVAILABLE').length);
     putCount('assignedAssets', assets.filter(x => x.status === 'ASSIGNED').length);
     putCount('openRequests', requests.filter(x => !['RESOLVED','REJECTED'].includes(x.status)).length);
@@ -20,7 +21,7 @@ async function loadManagerDashboard() {
     } else {
       requests.forEach((request) => {
         const tr = document.createElement('tr');
-        addCell(tr, request.ID); addCell(tr, request.asset_ID); addCell(tr, request.issueType); addCell(tr, request.priority); addCell(tr, request.status);
+        addCell(tr, request.ID); addCell(tr, assetTags.get(request.asset_ID) || request.asset_ID); addCell(tr, request.issueType); addCell(tr, request.priority); addCell(tr, request.status);
         tbody.appendChild(tr);
       });
     }
