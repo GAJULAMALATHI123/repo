@@ -1,0 +1,78 @@
+{
+  "welcomeFile": "/login.html",
+  "authenticationMethod": "route",
+  "routes": [
+    {
+      "source": "^/admin/(.*)$",
+      "target": "/admin/$1",
+      "destination": "srv-api",
+      "authenticationType": "xsuaa",
+      "scope": [
+        "$XSAPPNAME.Admin"
+      ]
+    },
+    {
+      "source": "^/manager/(.*)$",
+      "target": "/manager/$1",
+      "destination": "srv-api",
+      "authenticationType": "xsuaa",
+      "scope": [
+        "$XSAPPNAME.Manager"
+      ]
+    },
+    {
+      "source": "^/user/(.*)$",
+      "target": "/user/$1",
+      "destination": "srv-api",
+      "authenticationType": "xsuaa",
+      "scope": [
+        "$XSAPPNAME.User"
+      ]
+    },
+    {
+      "source": "^/admin\\.html$",
+      "target": "/admin.html",
+      "localDir": "resources",
+      "authenticationType": "xsuaa",
+      "scope": [
+        "$XSAPPNAME.Admin"
+      ]
+    },
+    {
+      "source": "^/manager\\.html$",
+      "target": "/manager.html",
+      "localDir": "resources",
+      "authenticationType": "xsuaa",
+      "scope": [
+        "$XSAPPNAME.Manager"
+      ]
+    },
+    {
+      "source": "^/index\\.html$",
+      "target": "/index.html",
+      "localDir": "resources",
+      "authenticationType": "xsuaa",
+      "scope": [
+        "$XSAPPNAME.User"
+      ]
+    },
+    {
+      "source": "^/(.*\\.(?:css|js))$",
+      "target": "/$1",
+      "localDir": "resources",
+      "authenticationType": "xsuaa"
+    },
+    {
+      "source": "^/login\\.html$",
+      "target": "/login.html",
+      "localDir": "resources",
+      "authenticationType": "xsuaa"
+    },
+    {
+      "source": "^/$",
+      "target": "/login.html",
+      "localDir": "resources",
+      "authenticationType": "xsuaa"
+    }
+  ]
+}
