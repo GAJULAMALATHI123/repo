@@ -20,19 +20,45 @@ async function loadAssets() {
     if (!response.ok) throw new Error('CAP service returned HTTP ' + response.status);
     const payload = await response.json();
     const assets = payload.value || [];
-    assetSelect.innerHTML = '<option value="">Choose an asset</option>';
+    assetSelect.replaceChildren();
+    const placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.textContent = assets.length ? 'Choose an asset' : 'No assets available';
+    assetSelect.appendChild(placeholder);
+
+    const assetRows = document.querySelector('#assetRows');
+    assetRows.replaceChildren();
     assets.forEach((asset) => {
       const option = document.createElement('option');
       option.value = asset.ID;
       option.textContent = [asset.assetTag, asset.model, asset.status].filter(Boolean).join(' — ');
       assetSelect.appendChild(option);
+      const row = document.createElement('tr');
+      [asset.assetTag || '—', asset.model || '—', asset.status || '—'].forEach((value) => {
+        const cell = document.createElement('td');
+        cell.textContent = value;
+        cell.style.padding = '12px';
+        cell.style.borderBottom = '1px solid #e0e7ef';
+        row.appendChild(cell);
+      });
+      assetRows.appendChild(row);
     });
     if (!assets.length) {
-      assetSelect.innerHTML = '<option value="">No assets available</option>';
+      const row = document.createElement('tr');
+      const cell = document.createElement('td');
+      cell.colSpan = 3;
+      cell.textContent = 'No assets are currently assigned to you.';
+      cell.style.padding = '12px';
+      row.appendChild(cell);
+      assetRows.appendChild(row);
       connectionStatus.textContent = 'Connected to CAP, but no assets were returned.';
     } else {
       connectionStatus.textContent = 'Connected to the CAP service. Select an asset to raise a request.';
     }
+    document.querySelector('#assignedCount').textContent = String(assets.length);
+    document.querySelector('#assetsStatus').textContent = assets.length
+      ? 'Showing ' + assets.length + ' asset(s) assigned to your account.'
+      : 'No asset assignments were found for your account.';
   } catch (error) {
     assetSelect.innerHTML = '<option value="">Assets could not be loaded</option>';
     connectionStatus.textContent = 'CAP service is not reachable yet. Start/deploy the CAP service and open this page from the same application host.';
