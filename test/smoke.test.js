@@ -83,3 +83,30 @@ test('maintenance workflow requires approval and restores the assigned status', 
   assert.match(userService, /Maintenance requests cannot be edited or deleted by users/);
   assert.match(userService, /attrs\.email/);
 });
+
+
+test('three role-specific Fiori Elements apps are configured', () => {
+  for (const role of ['admin', 'manager', 'user']) {
+    const dir = path.join(root, 'fiori', role);
+    const manifest = JSON.parse(fs.readFileSync(path.join(dir, 'manifest.json'), 'utf8'));
+    assert.ok(manifest['sap.app'].dataSources);
+    assert.ok(manifest['sap.ui5'].models['']);
+    assert.ok(manifest['sap.ui5'].routing.routes.length >= 2);
+    assert.ok(fs.existsSync(path.join(dir, 'Component.js')));
+    assert.ok(fs.existsSync(path.join(root, 'approuter', 'resources', 'fiori', role, 'manifest.json')));
+  }
+});
+
+test('Fiori Elements routes and Admin lifecycle action forms are hosted behind role protection', () => {
+  const router = JSON.parse(fs.readFileSync(path.join(root, 'approuter', 'xs-app.json'), 'utf8'));
+  for (const role of ['admin', 'manager', 'user']) {
+    const route = router.routes.find(item => item.source === '^/fiori/' + role + '/(.*)$');
+    assert.ok(route, 'Missing ' + role + ' Fiori route');
+    assert.deepEqual(route.scope, ['$XSAPPNAME.' + (role === 'admin' ? 'Admin' : role === 'manager' ? 'Manager' : 'User')]);
+  }
+  const actions = fs.readFileSync(path.join(root, 'approuter', 'resources', 'fiori', 'admin', 'actions.html'), 'utf8');
+  for (const action of ['assignAsset', 'transferAsset', 'returnAsset', 'reviewMaintenanceRequest', 'startMaintenance', 'completeMaintenance', 'retireAsset', 'archiveAsset']) {
+    assert.match(actions, new RegExp('data-action="' + action + '"'));
+  }
+  assert.ok(fs.existsSync(path.join(root, 'srv', 'annotations.cds')));
+});
