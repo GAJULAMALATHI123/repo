@@ -99,10 +99,18 @@ document.querySelector('#requestForm').addEventListener('submit', async (event) 
 
   message.textContent = 'Submitting request…';
   try {
+    const csrfResponse = await fetch('/user/MaintenanceRequests?$top=0', {
+      method: 'GET',
+      credentials: 'same-origin',
+      headers: { 'X-CSRF-Token': 'Fetch', Accept: 'application/json' }
+    });
+    if (!csrfResponse.ok) throw new Error('Could not prepare a secure request (HTTP ' + csrfResponse.status + ').');
+    const csrfToken = csrfResponse.headers.get('X-CSRF-Token');
+    if (!csrfToken) throw new Error('The CAP service did not return a CSRF token. Check the application router configuration.');
     const response = await fetch('/user/MaintenanceRequests', {
       method: 'POST',
       credentials: 'same-origin',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-CSRF-Token': csrfToken },
       body: JSON.stringify(body)
     });
     if (!response.ok) {
