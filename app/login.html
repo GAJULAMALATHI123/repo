@@ -1,6 +1,23 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sign in | IT Asset Lifecycle Manager</title><link rel="stylesheet" href="style.css"></head>
-<body><header><strong>IT Asset Lifecycle Manager</strong><span>Role-based workspace</span></header><main>
-<section class="welcome"><p class="eyebrow">WELCOME</p><h1>Sign in to your workspace</h1><p>Choose a role to preview its landing page. This is demo routing only, not real authentication.</p></section>
-<section class="panel" style="margin-top:18px"><form id="loginForm"><label>Work email<input name="email" type="email" placeholder="you@company.com" required></label><label>Demo role<select name="role" required><option value="">Choose your role</option><option value="index.html">User</option><option value="manager.html">Manager</option><option value="admin.html">Admin</option></select></label><button type="submit" class="primary">Continue</button><p id="message" role="status"></p></form><p class="note">In the deployed SAP application, SAP BTP authentication and assigned roles must determine access. A user must not gain Admin or Manager access by selecting a role here.</p></section>
-</main><script>document.getElementById('loginForm').addEventListener('submit',function(event){event.preventDefault();const role=this.elements.role.value;if(!role)return;window.location.href=role;});</script></body></html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sign in | IT Asset Lifecycle Manager</title><link rel="stylesheet" href="style.css"></head>
+<body><header><strong>IT Asset Lifecycle Manager</strong><span>Secure workspace</span></header><main>
+<section class="welcome"><p class="eyebrow">WELCOME</p><h1>Checking your workspace…</h1><p>Sign-in is handled by SAP BTP. This page checks which workspace your assigned role can access.</p></section>
+<section class="panel" style="margin-top:18px"><p id="message" role="status">Checking your assigned role…</p></section>
+</main><script>
+(async function () {
+  const message = document.getElementById('message');
+  const destinations = [
+    { url: '/admin/$metadata', page: '/admin.html' },
+    { url: '/manager/$metadata', page: '/manager.html' },
+    { url: '/user/$metadata', page: '/index.html' }
+  ];
+  for (const item of destinations) {
+    try {
+      const response = await fetch(item.url, { credentials: 'same-origin', headers: { Accept: 'application/xml' } });
+      if (response.ok) { window.location.replace(item.page); return; }
+    } catch (_) { /* Continue to the next role endpoint. */ }
+  }
+  message.textContent = 'Your account does not have an assigned Admin, Manager, or User role. Ask your SAP BTP administrator to assign the correct role collection, then sign in again.';
+})();
+</script></body></html>
