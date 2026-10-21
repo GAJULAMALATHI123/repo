@@ -117,7 +117,7 @@ module.exports = class AssetAdminService extends cds.ApplicationService {
       if (requestID) {
         request = await tx.run(SELECT.one.from(MaintenanceRequests).where({ ID: requestID }));
         if (!request || request.asset_ID !== assetID) return req.reject(400, 'Maintenance request does not match this asset.');
-        if (['RESOLVED', 'REJECTED'].includes(request.status)) return req.reject(400, 'This request is already closed.');
+        if (request.status !== 'APPROVED') return req.reject(400, 'Only an approved maintenance request can be started.');
       }
       const maintenanceID = cds.utils.uuid();
       await tx.run(INSERT.into(MaintenanceRecords).entries({
@@ -143,7 +143,9 @@ module.exports = class AssetAdminService extends cds.ApplicationService {
       await tx.run(UPDATE(MaintenanceRecords).set({ status: 'COMPLETED', completedDate, outcome: outcome.trim(), cost }).where({ ID: maintenanceID }));
       const remaining = await tx.run(SELECT.one.from(MaintenanceRecords).where({ asset_ID: record.asset_ID, status: 'IN_PROGRESS' }));
       if (!remaining || remaining.ID === maintenanceID) {
-        await tx.run(UPDATE(Assets).set({ status: 'AVAILABLE' }).where({ ID: record.asset_ID, status: 'UNDER_MAINTENANCE' }));
+        const asset = await tx.run(SELECT.one.from(Assets).where({ ID: record.asset_ID }));
+        const restoredStatus = asset?.currentHolder_ID ? 'ASSIGNED' : 'AVAILABLE';
+        await tx.run(UPDATE(Assets).set({ status: restoredStatus }).where({ ID: record.asset_ID, status: 'UNDER_MAINTENANCE' }));
       }
       const request = await tx.run(SELECT.one.from(MaintenanceRequests).where({ maintenance_ID: maintenanceID }));
       if (request) await tx.run(UPDATE(MaintenanceRequests).set({
