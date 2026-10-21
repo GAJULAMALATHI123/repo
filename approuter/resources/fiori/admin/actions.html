@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin Lifecycle Actions | IT Asset Lifecycle Manager</title>
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:#f4f7fa;color:#17324d;font-family:Arial,sans-serif;margin:0}.bar{background:#123b5d;color:white;padding:15px 22px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}.bar strong{margin-right:auto}.bar a{color:white}.wrap{max-width:1150px;margin:22px auto;padding:0 16px}.intro{background:white;border-radius:12px;padding:22px;margin-bottom:18px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:16px}.card{background:white;border:1px solid #dbe4ec;border-radius:12px;padding:18px}.card h2{font-size:18px;margin-top:0}.card label{display:block;font-size:13px;font-weight:600;margin:10px 0 5px}.card input,.card select,.card textarea{box-sizing:border-box;width:100%;padding:9px;border:1px solid #b8c7d5;border-radius:6px;background:white}.card textarea{min-height:70px}.card button{margin-top:14px;background:#0a6ed1;color:white;border:0;border-radius:6px;padding:10px 14px;cursor:pointer}.card button:disabled{opacity:.5}.status{font-size:13px;min-height:18px;margin-top:10px}.muted{color:#52677a;font-size:14px}
+</style>
+</head>
+<body>
+<header class="bar"><strong>IT Asset Lifecycle Manager · Admin Actions</strong><a href="/fiori/admin/index.html">Fiori Elements Admin</a><a href="/logout">Sign out</a></header>
+<main class="wrap">
+<section class="intro"><h1>Asset lifecycle actions</h1><p class="muted">Use these forms for controlled lifecycle operations. Asset, employee, request and maintenance options are loaded from the Admin CAP service. Actions are checked by the backend.</p><p id="pageStatus" role="status">Loading live options…</p></section>
+<div class="grid">
+<section class="card"><h2>Assign asset</h2><form data-action="assignAsset"><label>Asset</label><select name="assetID" data-options="assets" required></select><label>Employee</label><select name="employeeID" data-options="employees" required></select><label>Assignment date</label><input type="date" name="assignedDate" data-today required><label>Expected return date</label><input type="date" name="expectedReturnDate"><button>Assign asset</button><p class="status" role="status"></p></form></section>
+<section class="card"><h2>Transfer asset</h2><form data-action="transferAsset"><label>Asset</label><select name="assetID" data-options="assets" required></select><label>New employee</label><select name="employeeID" data-options="employees" required></select><label>Transfer date</label><input type="date" name="transitionDate" data-today required><button>Transfer asset</button><p class="status" role="status"></p></form></section>
+<section class="card"><h2>Return asset</h2><form data-action="returnAsset"><label>Asset</label><select name="assetID" data-options="assets" required></select><label>Return date</label><input type="date" name="returnDate" data-today required><button>Record return</button><p class="status" role="status"></p></form></section>
+<section class="card"><h2>Review maintenance request</h2><form data-action="reviewMaintenanceRequest"><label>Request</label><select name="requestID" data-options="requests" required></select><label>Decision</label><select name="decision" required><option value="APPROVE">Approve</option><option value="REJECT">Reject</option></select><label>Notes</label><textarea name="notes" placeholder="Review notes"></textarea><button>Save review</button><p class="status" role="status"></p></form></section>
+<section class="card"><h2>Start maintenance</h2><form data-action="startMaintenance"><label>Asset</label><select name="assetID" data-options="assets" required></select><label>Maintenance type</label><input name="maintenanceType" placeholder="e.g. Hardware repair" required><label>Approved request (optional)</label><select name="requestID" data-options="approvedRequests"><option value="">No linked request</option></select><button>Start maintenance</button><p class="status" role="status"></p></form></section>
+<section class="card"><h2>Complete maintenance</h2><form data-action="completeMaintenance"><label>Maintenance record</label><select name="maintenanceID" data-options="maintenance" required></select><label>Completion date</label><input type="date" name="completedDate" data-today required><label>Outcome</label><textarea name="outcome" required placeholder="Work completed and outcome"></textarea><label>Cost</label><input type="number" name="cost" min="0" step="0.01" placeholder="0.00"><button>Complete maintenance</button><p class="status" role="status"></p></form></section>
+<section class="card"><h2>Retire asset</h2><form data-action="retireAsset"><label>Asset</label><select name="assetID" data-options="assets" required></select><label>Retirement date</label><input type="date" name="retirementDate" data-today required><label>Reason</label><textarea name="reason" required></textarea><button>Retire asset</button><p class="status" role="status"></p></form></section>
+<section class="card"><h2>Archive retired asset</h2><form data-action="archiveAsset"><label>Asset</label><select name="assetID" data-options="assets" required></select><label>Reason</label><textarea name="reason" required></textarea><label>Disposal method</label><input name="disposalMethod" placeholder="e.g. Certified e-waste disposal"><button>Archive asset</button><p class="status" role="status"></p></form></section>
+</div>
+</main>
+<script>
+const $ = (selector, root=document) => root.querySelector(selector);
+const $$ = (selector, root=document) => [...root.querySelectorAll(selector)];
+let optionData={assets:[],employees:[],requests:[],approvedRequests:[],maintenance:[]};
+function setOptions(select,items,labeler,includeBlank=true){
+ const blank=document.createElement('option');blank.value='';blank.textContent=includeBlank?'Choose…':'';
+ select.replaceChildren();if(includeBlank)select.appendChild(blank);
+ items.forEach(item=>{const o=document.createElement('option');o.value=item.ID;o.textContent=labeler(item);select.appendChild(o);});
+}
+async function rows(path){const r=await fetch(path,{credentials:'same-origin',headers:{Accept:'application/json'}});if(!r.ok)throw new Error('HTTP '+r.status+' loading '+path);return (await r.json()).value||[];}
+async function loadOptions(){
+ try{
+  const [assets,employees,requests,maintenance]=await Promise.all([
+   rows('/admin/Assets?$select=ID,assetTag,model,status&$orderby=assetTag'),
+   rows('/admin/Employees?$select=ID,employeeNumber,fullName,status&$orderby=fullName'),
+   rows('/admin/MaintenanceRequests?$select=ID,asset_ID,issueType,status,priority'),
+   rows('/admin/MaintenanceRecords?$select=ID,asset_ID,type,status,reportedDate')
+  ]);
+  optionData={assets,employees:employees.filter(x=>x.status==='ACTIVE'),requests,approvedRequests:requests.filter(x=>x.status==='APPROVED'),maintenance:maintenance.filter(x=>x.status==='IN_PROGRESS')};
+  $$('select[data-options]').forEach(s=>{
+   const kind=s.dataset.options,items=optionData[kind]||[];
+   const labelers={
+    assets:x=>(x.assetTag||x.ID)+' · '+(x.model||'')+' ['+x.status+']',
+    employees:x=>(x.fullName||x.ID)+(x.employeeNumber?' · '+x.employeeNumber:''),
+    requests:x=>(x.issueType||'Issue')+' · '+x.ID.slice(0,8)+' ['+x.status+']',
+    approvedRequests:x=>(x.issueType||'Issue')+' · '+x.ID.slice(0,8),
+    maintenance:x=>(x.type||'Maintenance')+' · '+x.ID.slice(0,8)+' ['+x.status+']'
+   };
+   setOptions(s,items,labelers[kind]|| (x=>x.ID),!s.querySelector('option[value=""]'));
+  });
+  $('#pageStatus').textContent='Live options loaded. '+assets.length+' assets, '+employees.length+' employees, '+requests.length+' requests.';
+ }catch(e){$('#pageStatus').textContent='Could not load options: '+e.message+'. Confirm Admin role and CAP service availability.';}
+}
+async function invoke(action,payload){
+ const csrf=await fetch('/admin/Assets?$top=0',{credentials:'same-origin',headers:{'X-CSRF-Token':'Fetch',Accept:'application/json'}});
+ if(!csrf.ok)throw new Error('CSRF preparation failed (HTTP '+csrf.status+').');
+ const token=csrf.headers.get('X-CSRF-Token');if(!token)throw new Error('No CSRF token returned by CAP.');
+ const response=await fetch('/admin/'+action,{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json',Accept:'application/json','X-CSRF-Token':token},body:JSON.stringify(payload)});
+ if(!response.ok)throw new Error((await response.text()).slice(0,300)||'Action failed.');
+ const data=await response.json().catch(()=>({}));
+ return data.value||'Action completed successfully.';
+}
+$$('form[data-action]').forEach(form=>form.addEventListener('submit',async event=>{
+ event.preventDefault();const button=$('button',form),status=$('.status',form);button.disabled=true;status.textContent='Saving…';
+ const raw=Object.fromEntries(new FormData(form).entries());const payload={...raw};
+ ['assignedDate','expectedReturnDate','transitionDate','returnDate','completedDate','retirementDate'].forEach(k=>{if(payload[k]==='')delete payload[k];});
+ if(payload.cost==='')delete payload.cost;else if(payload.cost!==undefined)payload.cost=Number(payload.cost);
+ if(payload.requestID==='')delete payload.requestID;
+ try{const result=await invoke(form.dataset.action,payload);status.textContent=typeof result==='string'?result:'Action completed successfully.';form.reset();$$('input[data-today]',form).forEach(i=>i.value=new Date().toISOString().slice(0,10));await loadOptions();}
+ catch(e){status.textContent='Action failed: '+e.message;}
+ finally{button.disabled=false;}
+}));
+$$('input[data-today]').forEach(i=>i.value=new Date().toISOString().slice(0,10));
+loadOptions();
+</script>
+</body></html>
