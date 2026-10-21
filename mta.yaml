@@ -1,0 +1,45 @@
+_schema-version: "3.3"
+ID: it-asset-lifecycle-manager
+version: 0.1.0
+description: IT Asset Lifecycle Manager - SAP CAP application
+
+modules:
+  - name: it-asset-lifecycle-manager-srv
+    type: nodejs
+    path: gen/srv
+    requires:
+      - name: it-asset-lifecycle-manager-db
+      - name: it-asset-lifecycle-manager-auth
+    provides:
+      - name: srv-api
+        properties:
+          srv-url: ${default-url}
+    parameters:
+      buildpack: nodejs_buildpack
+      memory: 512M
+      disk-quota: 512M
+
+  - name: it-asset-lifecycle-manager-db-deployer
+    type: hdb
+    path: gen/db
+    requires:
+      - name: it-asset-lifecycle-manager-db
+    parameters:
+      buildpack: nodejs_buildpack
+
+resources:
+  - name: it-asset-lifecycle-manager-db
+    type: com.sap.xs.hdi-container
+    parameters:
+      service: hana
+      service-plan: hdi-shared
+
+  - name: it-asset-lifecycle-manager-auth
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: xsuaa
+      service-plan: application
+      path: ./xs-security.json
+      config:
+        xsappname: it-asset-lifecycle-manager
+        tenant-mode: dedicated
