@@ -3,6 +3,33 @@
   "authenticationMethod": "route",
   "routes": [
     {
+      "source": "^/fiori/admin/(.*)$",
+      "target": "/fiori/admin/$1",
+      "localDir": "resources",
+      "authenticationType": "xsuaa",
+      "scope": [
+        "$XSAPPNAME.Admin"
+      ]
+    },
+    {
+      "source": "^/fiori/manager/(.*)$",
+      "target": "/fiori/manager/$1",
+      "localDir": "resources",
+      "authenticationType": "xsuaa",
+      "scope": [
+        "$XSAPPNAME.Manager"
+      ]
+    },
+    {
+      "source": "^/fiori/user/(.*)$",
+      "target": "/fiori/user/$1",
+      "localDir": "resources",
+      "authenticationType": "xsuaa",
+      "scope": [
+        "$XSAPPNAME.User"
+      ]
+    },
+    {
       "source": "^/admin/(.*)$",
       "target": "/admin/$1",
       "destination": "srv-api",
