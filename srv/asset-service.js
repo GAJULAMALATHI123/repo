@@ -8,10 +8,17 @@ module.exports = class AssetAdminService extends cds.ApplicationService {
       MaintenanceRecords, MaintenanceRequests, ArchiveRecords
     } = this.entities;
 
-    this.before('CREATE', Assets, (req) => {
+    this.before('CREATE', Assets, async (req) => {
       const d = req.data;
       if (!d.assetTag || !d.serialNumber || !d.category_ID || !d.purchaseDate) {
         req.error(400, 'Asset tag, serial number, category, and purchase date are required.');
+      }
+      const tx = cds.tx(req);
+      if (d.assetTag && await tx.run(SELECT.one.from(Assets).where({ assetTag: d.assetTag }))) {
+        req.error(409, 'Asset tag must be unique.');
+      }
+      if (d.serialNumber && await tx.run(SELECT.one.from(Assets).where({ serialNumber: d.serialNumber }))) {
+        req.error(409, 'Serial number must be unique.');
       }
       d.status ||= 'AVAILABLE';
       if (d.firstDistributionDate && d.purchaseDate &&
@@ -181,6 +188,8 @@ module.exports = class AssetAdminService extends cds.ApplicationService {
       const asset = await tx.run(SELECT.one.from(Assets).where({ ID: assetID }));
       if (!asset) return req.reject(404, 'Asset not found.');
       if (['ASSIGNED', 'UNDER_MAINTENANCE', 'ARCHIVED'].includes(asset.status)) return req.reject(400, 'Return the asset and finish maintenance before retirement.');
+      if (asset.status === 'RETIRED') return req.reject(400, 'This asset is already retired.');
+      if (new Date(retirementDate) < new Date(asset.purchaseDate)) return req.reject(400, 'Retirement date cannot be earlier than purchase date.');
       await tx.run(UPDATE(Assets).set({ status: 'RETIRED', currentHolder_ID: null }).where({ ID: assetID }));
       await tx.run(INSERT.into(OwnershipLedgers).entries({
         asset_ID: assetID, action: 'RETIRED', transitionDate: new Date(retirementDate).toISOString(), notes: reason.trim()
