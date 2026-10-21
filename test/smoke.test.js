@@ -39,3 +39,19 @@ test('user maintenance service validates priority and asset ownership', () => {
   assert.match(userService, /currently assigned to you/);
   assert.match(userService, /findCurrentEmployee/);
 });
+
+
+test('maintenance workflow is wired across user, admin, and manager dashboards', () => {
+  const userUi = fs.readFileSync(path.join(root, 'app', 'app.js'), 'utf8');
+  const adminUi = fs.readFileSync(path.join(root, 'app', 'admin.js'), 'utf8');
+  const managerUi = fs.readFileSync(path.join(root, 'app', 'manager.js'), 'utf8');
+  const adminService = fs.readFileSync(path.join(root, 'srv', 'asset-service.js'), 'utf8');
+  assert.match(userUi, /fetch\('\/user\/MaintenanceRequests'/);
+  assert.match(userUi, /openRequestCount/);
+  assert.match(adminUi, /reviewMaintenanceRequest/);
+  assert.match(adminUi, /APPROVE/);
+  assert.match(adminUi, /REJECT/);
+  assert.match(managerUi, /\/manager\/MaintenanceRequests/);
+  assert.match(managerUi, /setInterval\(loadManagerDashboard, 30000\)/);
+  assert.match(adminService, /this\.on\('reviewMaintenanceRequest'/);
+});
