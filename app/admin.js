@@ -1,3 +1,23 @@
+async function reviewRequest(requestID, decision, button) {
+  const status = document.getElementById('adminStatus');
+  const buttons = [...button.parentElement.querySelectorAll('button')];
+  buttons.forEach((item) => { item.disabled = true; });
+  status.textContent = decision === 'APPROVE' ? 'Approving request…' : 'Rejecting request…';
+  try {
+    const response = await fetch('/admin/reviewMaintenanceRequest', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({ requestID, decision, notes: decision === 'APPROVE' ? 'Approved by Admin.' : 'Rejected by Admin.' })
+    });
+    if (!response.ok) throw new Error((await response.text()).slice(0, 240) || 'Review action failed.');
+    status.textContent = 'Request ' + decision.toLowerCase() + 'd successfully.';
+    await loadAdminDashboard();
+  } catch (error) {
+    status.textContent = 'Could not update request: ' + (error.message || 'Check the CAP service and Admin role.');
+    buttons.forEach((item) => { item.disabled = false; });
+  }
+}
 async function getRows(path) {
   const response = await fetch(path, { headers: { Accept: 'application/json' }, credentials: 'same-origin' });
   if (!response.ok) throw new Error('HTTP ' + response.status);
@@ -21,11 +41,30 @@ async function loadAdminDashboard() {
     } else {
       requests.forEach((request) => {
         const tr = document.createElement('tr');
-        cell(tr, request.ID); cell(tr, assetTags.get(request.asset_ID) || request.asset_ID); cell(tr, request.priority); cell(tr, request.status); cell(tr, 'Review action will be enabled after backend authorization is verified.');
+        cell(tr, request.ID);
+        cell(tr, assetTags.get(request.asset_ID) || request.asset_ID);
+        cell(tr, request.priority);
+        cell(tr, request.status);
+        const actionCell = document.createElement('td');
+        actionCell.style.padding = '12px';
+        actionCell.style.borderBottom = '1px solid #e0e7ef';
+        if (['SUBMITTED', 'UNDER_REVIEW'].includes(request.status)) {
+          ['APPROVE', 'REJECT'].forEach((decision) => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.textContent = decision === 'APPROVE' ? 'Approve' : 'Reject';
+            button.style.marginRight = '6px';
+            button.addEventListener('click', () => reviewRequest(request.ID, decision, button));
+            actionCell.appendChild(button);
+          });
+        } else {
+          actionCell.textContent = 'No action';
+        }
+        tr.appendChild(actionCell);
         tbody.appendChild(tr);
       });
     }
-    status.textContent = 'CAP data loaded. Request approval actions are not enabled in this prototype yet.';
+    status.textContent = 'CAP data loaded. Submitted requests can be approved or rejected here.';
   } catch (error) {
     status.textContent = 'Could not load live data. Check that the CAP app is running, the URL is same-origin, and your account has the Admin role.';
     tbody.replaceChildren();
