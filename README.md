@@ -1,6 +1,6 @@
 # IT Asset Lifecycle Manager
 
-A SAP BTP project scaffold using the SAP Cloud Application Programming Model (CAP), Node.js, CDS, XSUAA, and an application router. The current browser screens are HTML prototypes; SAP Fiori Elements pages still need to be implemented.
+A SAP BTP project scaffold using the SAP Cloud Application Programming Model (CAP), Node.js, CDS, XSUAA, and an application router. The repository now includes role-specific SAP Fiori Elements OData V4 app scaffolds for Admin, Manager, and User, plus an Admin lifecycle-action workspace. These UI artifacts still require browser validation in SAP BTP.
 
 ## Project status
 
@@ -14,7 +14,8 @@ This repository is being built in stages. The first commit establishes the CAP d
 - Maintenance records and user-submitted maintenance requests
 - Retirement and archival controls
 - Separate Admin, Manager, and User service access
-- Planned Fiori Elements list reports and object pages (not implemented yet)
+- Role-specific Fiori Elements list reports for assets, requests, maintenance records, assignments, and master data
+- Admin lifecycle action forms for assignment, transfer, return, request review, maintenance start/completion, retirement, and archival
 - Cloud Foundry / MTA deployment configuration
 
 ## Prerequisites
@@ -61,3 +62,18 @@ Before deployment:
 5. Verify that each account is redirected to its authorized workspace and that attempts to open another role's page or API endpoint are denied.
 
 Do not treat deployment as production-ready until the app-router/MTA deployment and live HANA/XSUAA role tests pass. The automated GitHub workflow validates the CAP build and regression tests, but it does not deploy to your BTP subaccount.
+
+
+## Fiori Elements apps
+
+The three Fiori Elements application sources are in `fiori/admin`, `fiori/manager`, and `fiori/user`. Their hosted copies are under `approuter/resources/fiori`. The Admin lifecycle action workspace is `approuter/resources/fiori/admin/actions.html`.
+
+After deployment, use the role-specific application paths:
+
+- Admin: `/fiori/admin/index.html`
+- Manager: `/fiori/manager/index.html`
+- User: `/fiori/user/index.html`
+
+The login landing page checks the role-protected CAP endpoints and redirects to the matching Fiori Elements app. The Admin lifecycle-action link is available from the Admin application.
+
+The app router protects each role path with its matching XSUAA scope. CAP UI annotations are defined in `srv/annotations.cds`. The current GitHub workflow checks automated regression tests and the CAP production build; it does not perform a live browser test against a deployed SAP BTP subaccount.
