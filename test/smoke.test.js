@@ -92,6 +92,7 @@ test('three role-specific Fiori Elements apps are configured', () => {
     assert.ok(manifest['sap.app'].dataSources);
     assert.ok(manifest['sap.ui5'].models['']);
     assert.ok(manifest['sap.ui5'].routing.routes.length >= 2);
+    assert.ok(Object.keys(manifest['sap.ui5'].routing.targets).some(name => name.endsWith('ObjectPage')), role + ' app must include object pages');
     assert.ok(fs.existsSync(path.join(dir, 'Component.js')));
     assert.ok(fs.existsSync(path.join(root, 'approuter', 'resources', 'fiori', role, 'manifest.json')));
   }
