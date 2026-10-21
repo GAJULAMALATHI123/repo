@@ -16,6 +16,7 @@ This repository is being built in stages. The first commit establishes the CAP d
 - Separate Admin, Manager, and User service access
 - Role-specific Fiori Elements list reports for assets, requests, maintenance records, assignments, and master data
 - Admin lifecycle action forms for assignment, transfer, return, request review, maintenance start/completion, retirement, and archival
+- Role-protected Admin and Manager report centers with filtered asset, maintenance, and assignment previews, PDF downloads, and SMTP-based report email
 - Cloud Foundry / MTA deployment configuration
 
 ## Prerequisites
@@ -32,13 +33,15 @@ npm install
 npm run watch
 ```
 
-The CAP services are exposed at `/admin`, `/manager`, and `/user` as defined in `srv/asset-service.cds`. Development uses mocked authentication and SQLite; production is configured for XSUAA and SAP HANA.
+The CAP services are exposed at `/admin`, `/manager`, and `/user`; the Admin and Manager services are defined in `srv/asset-service.cds` and `srv/manager-service.cds`. Development uses mocked authentication and SQLite; production is configured for XSUAA and SAP HANA.
 
 ## Important notes
 
 - Configure XSUAA roles and bindings before deploying to a shared environment.
 - Never commit credentials, service keys, or real employee/asset data.
 - Maintenance requests are an extension to the supplied functional requirements so that Users can submit issues and authorized Admins/Managers can review them.
+- PDF reports include title, generation timestamp, selected filters, and labeled data columns. Reports are limited to 1,000 rows; apply filters if a report exceeds this limit.
+- Email delivery requires SMTP settings in the deployment environment: `SMTP_HOST`, optional `SMTP_PORT` (default `587`), optional `SMTP_SECURE` (`true` or `false`), `REPORT_EMAIL_FROM`, and `SMTP_USER` / `SMTP_PASS` when authentication is required. Configure secrets in the BTP environment; never commit credentials.
 - This repository is a development starting point; deployment and end-to-end tests must be completed in the target BTP subaccount.
 
 ## BTP deployment preparation
@@ -74,6 +77,6 @@ After deployment, use the role-specific application paths:
 - Manager: `/fiori/manager/index.html`
 - User: `/fiori/user/index.html`
 
-The login landing page checks the role-protected CAP endpoints and redirects to the matching Fiori Elements app. The Admin lifecycle-action link is available from the Admin application.
+The login landing page checks the role-protected CAP endpoints and redirects to the matching Fiori Elements app. The Admin lifecycle-action link is available from the Admin application. Admin and Manager can open their `Reports / PDF Export` page to preview filtered reports, download a PDF, or email the PDF after SMTP is configured.
 
 The app router protects each role path with its matching XSUAA scope. CAP UI annotations are defined in `srv/annotations.cds`. The current GitHub workflow checks automated regression tests and the CAP production build; it does not perform a live browser test against a deployed SAP BTP subaccount.
