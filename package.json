@@ -1,0 +1,30 @@
+{
+  "name": "it-asset-lifecycle-manager",
+  "version": "0.1.0",
+  "private": true,
+  "description": "IT Asset Lifecycle Manager using SAP CAP, Node.js, CDS, and Fiori Elements",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "cds-serve",
+    "watch": "cds watch",
+    "build": "cds build --production",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "@sap/cds": "^8",
+    "express": "^4"
+  },
+  "devDependencies": {
+    "@cap-js/sqlite": "^1"
+  },
+  "cds": {
+    "requires": {
+      "db": {
+        "kind": "sqlite",
+        "credentials": {
+          "url": "db.sqlite"
+        }
+      }
+    }
+  }
+}
