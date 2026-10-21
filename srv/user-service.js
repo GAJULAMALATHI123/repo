@@ -28,6 +28,13 @@ module.exports = class AssetUserService extends cds.ApplicationService {
       req.query.where({ employee_ID: employee.ID });
     });
 
+    // Users may only read maintenance requests they submitted themselves.
+    this.before('READ', MaintenanceRequests, (req) => {
+      const userId = req.user?.id;
+      if (!userId) return req.reject(403, 'Sign in to view your maintenance requests.');
+      req.query.where({ requestedBy: userId });
+    });
+
     // Show ledger history only for assets the employee currently holds or held.
     this.before('READ', OwnershipLedgers, async (req) => {
       const employee = await findCurrentEmployee(req);
