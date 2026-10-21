@@ -51,7 +51,7 @@ async function loadOptions(){
     approvedRequests:x=>(x.issueType||'Issue')+' · '+x.ID.slice(0,8),
     maintenance:x=>(x.type||'Maintenance')+' · '+x.ID.slice(0,8)+' ['+x.status+']'
    };
-   setOptions(s,items,labelers[kind]|| (x=>x.ID),!s.querySelector('option[value=""]'));
+   setOptions(s,items,labelers[kind]|| (x=>x.ID),true);
   });
   $('#pageStatus').textContent='Live options loaded. '+assets.length+' assets, '+employees.length+' employees, '+requests.length+' requests.';
  }catch(e){$('#pageStatus').textContent='Could not load options: '+e.message+'. Confirm Admin role and CAP service availability.';}
