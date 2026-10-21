@@ -11,6 +11,7 @@ async function loadAdminDashboard() {
   const tbody = document.getElementById('adminRequestRows');
   try {
     const [assets, requests] = await Promise.all([getRows('/admin/Assets?$select=ID,assetTag,status'), getRows('/admin/MaintenanceRequests?$select=ID,asset_ID,priority,status,issueType,submittedAt')]);
+    const assetTags = new Map(assets.map(asset => [asset.ID, asset.assetTag || asset.ID]));
     putCount('totalAssets', assets.length);
     putCount('pendingRequests', requests.filter(x => x.status === 'SUBMITTED').length);
     putCount('underMaintenance', assets.filter(x => x.status === 'UNDER_MAINTENANCE').length);
@@ -20,7 +21,7 @@ async function loadAdminDashboard() {
     } else {
       requests.forEach((request) => {
         const tr = document.createElement('tr');
-        cell(tr, request.ID); cell(tr, request.asset_ID); cell(tr, request.priority); cell(tr, request.status); cell(tr, 'Review action will be enabled after backend authorization is verified.');
+        cell(tr, request.ID); cell(tr, assetTags.get(request.asset_ID) || request.asset_ID); cell(tr, request.priority); cell(tr, request.status); cell(tr, 'Review action will be enabled after backend authorization is verified.');
         tbody.appendChild(tr);
       });
     }
