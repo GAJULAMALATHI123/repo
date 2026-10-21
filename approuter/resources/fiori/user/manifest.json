@@ -1,0 +1,111 @@
+{
+  "_version": "1.65.0",
+  "sap.app": {
+    "id": "itam.fiori.user",
+    "type": "application",
+    "title": "IT Asset Lifecycle Manager — User",
+    "description": "SAP Fiori elements application for IT Asset Lifecycle Manager",
+    "applicationVersion": {
+      "version": "1.0.0"
+    },
+    "dataSources": {
+      "userService": {
+        "uri": "/user/",
+        "type": "OData",
+        "settings": {
+          "odataVersion": "4.0"
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "dependencies": {
+      "minUI5Version": "1.120.0",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {},
+        "sap.fe.templates": {},
+        "sap.f": {}
+      }
+    },
+    "models": {
+      "": {
+        "dataSource": "userService",
+        "preload": true,
+        "settings": {
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true,
+          "synchronizationMode": "None"
+        }
+      }
+    },
+    "rootView": {
+      "viewName": "itam.fiori.user.App",
+      "type": "XML",
+      "id": "App",
+      "async": true
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.f.routing.Router",
+        "viewType": "XML",
+        "viewPath": "itam.fiori.user",
+        "controlId": "app",
+        "controlAggregation": "pages",
+        "async": true
+      },
+      "routes": [
+        {
+          "pattern": "",
+          "name": "Home",
+          "target": "Assets"
+        },
+        {
+          "pattern": "assets",
+          "name": "Assets",
+          "target": "Assets"
+        },
+        {
+          "pattern": "requests",
+          "name": "MaintenanceRequests",
+          "target": "MaintenanceRequests"
+        }
+      ],
+      "targets": {
+        "Assets": {
+          "type": "Component",
+          "id": "Assets",
+          "name": "sap.fe.templates.ListReport",
+          "options": {
+            "settings": {
+              "entitySet": "Assets",
+              "contextPath": "/Assets",
+              "variantManagement": "Page"
+            }
+          }
+        },
+        "MaintenanceRequests": {
+          "type": "Component",
+          "id": "MaintenanceRequests",
+          "name": "sap.fe.templates.ListReport",
+          "options": {
+            "settings": {
+              "entitySet": "MaintenanceRequests",
+              "contextPath": "/MaintenanceRequests",
+              "variantManagement": "Page"
+            }
+          }
+        }
+      }
+    }
+  }
+}
