@@ -11,7 +11,11 @@ module.exports = class AssetUserService extends cds.ApplicationService {
     const findCurrentEmployee = async (req) => {
       if (!req.user || !Employees) return null;
       const attrs = req.user.attr || {};
-      const candidates = [...new Set([attrs.email, attrs.user_name, req.user.id].filter(Boolean).map(value => String(value).trim()))];
+      const identities = [attrs.email, attrs.user_name, req.user.id]
+        .filter(Boolean)
+        .map(value => String(value).trim())
+        .filter(Boolean);
+      const candidates = [...new Set(identities.flatMap(value => [value, value.toLowerCase(), value.toUpperCase()]))];
       if (!candidates.length) return null;
       const tx = cds.tx(req);
       for (const email of candidates) {
