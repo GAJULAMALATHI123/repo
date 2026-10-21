@@ -12,7 +12,9 @@
   },
   "dependencies": {
     "@sap/cds": "^8",
-    "express": "^4"
+    "express": "^4",
+    "@cap-js/hana": "^1",
+    "@sap/xssec": "^4"
   },
   "devDependencies": {
     "@cap-js/sqlite": "^1"
@@ -20,13 +22,23 @@
   "cds": {
     "requires": {
       "db": {
-        "kind": "sqlite",
-        "credentials": {
-          "url": "db.sqlite"
+        "[development]": {
+          "kind": "sqlite",
+          "credentials": {
+            "url": "db.sqlite"
+          }
+        },
+        "[production]": {
+          "kind": "hana"
         }
       },
       "auth": {
-        "kind": "xsuaa"
+        "[development]": {
+          "kind": "mocked"
+        },
+        "[production]": {
+          "kind": "xsuaa"
+        }
       }
     }
   }
