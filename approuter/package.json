@@ -1,0 +1,12 @@
+{
+  "name": "it-asset-lifecycle-manager-approuter",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SAP BTP application router for IT Asset Lifecycle Manager",
+  "scripts": {
+    "start": "node node_modules/@sap/approuter/approuter.js"
+  },
+  "dependencies": {
+    "@sap/approuter": "^20.0.0"
+  }
+}
