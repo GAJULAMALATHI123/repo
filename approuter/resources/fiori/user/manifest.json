@@ -33,7 +33,8 @@
         "sap.m": {},
         "sap.ui.core": {},
         "sap.fe.templates": {},
-        "sap.f": {}
+        "sap.f": {},
+        "sap.fe.core": {}
       }
     },
     "models": {
