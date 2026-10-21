@@ -124,16 +124,15 @@ test('Admin lifecycle handlers validate unique assets and retirement transitions
 });
 
 test('FR-022 to FR-024 report actions are declared for Admin and Manager', () => {
-  const service = fs.readFileSync(path.join(root, 'srv', 'asset-service.cds'), 'utf8');
-  for (const role of ['AssetAdminService', 'AssetManagerService']) {
-    const start = service.indexOf('service ' + role);
-    assert.notEqual(start, -1);
-    const end = service.indexOf('\n}', start);
-    const block = service.slice(start, end);
-    assert.match(block, /action getReportData\(/);
-    assert.match(block, /action generateReport\(/);
-    assert.match(block, /action emailReport\(/);
+  const admin = fs.readFileSync(path.join(root, 'srv', 'asset-service.cds'), 'utf8');
+  const manager = fs.readFileSync(path.join(root, 'srv', 'manager-service.cds'), 'utf8');
+  for (const service of [admin, manager]) {
+    assert.match(service, /action getReportData\(/);
+    assert.match(service, /action generateReport\(/);
+    assert.match(service, /action emailReport\(/);
   }
+  assert.match(manager, /@requires: 'Manager'/);
+  assert.ok(fs.existsSync(path.join(root, 'srv', 'manager-service.js')));
 });
 
 test('Report export includes PDF metadata, filters, recipient validation and role pages', () => {
