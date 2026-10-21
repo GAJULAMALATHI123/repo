@@ -66,6 +66,12 @@
       "authenticationType": "xsuaa"
     },
     {
+      "source": "^/signed-out\\.html$",
+      "target": "/signed-out.html",
+      "localDir": "resources",
+      "authenticationType": "none"
+    },
+    {
       "source": "^/login\\.html$",
       "target": "/login.html",
       "localDir": "resources",
@@ -80,6 +86,6 @@
   ],
   "logout": {
     "logoutEndpoint": "/logout",
-    "logoutPage": "/login.html"
+    "logoutPage": "/signed-out.html"
   }
 }
