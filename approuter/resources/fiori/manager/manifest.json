@@ -49,21 +49,8 @@
         }
       }
     },
-    "rootView": {
-      "viewName": "itam.fiori.manager.App",
-      "type": "XML",
-      "id": "App",
-      "async": true
-    },
     "routing": {
-      "config": {
-        "routerClass": "sap.f.routing.Router",
-        "viewType": "XML",
-        "viewPath": "itam.fiori.manager",
-        "controlId": "app",
-        "controlAggregation": "pages",
-        "async": true
-      },
+      "config": {},
       "routes": [
         {
           "pattern": "",
@@ -108,7 +95,6 @@
           "name": "sap.fe.templates.ListReport",
           "options": {
             "settings": {
-              "entitySet": "Assets",
               "contextPath": "/Assets",
               "variantManagement": "Page"
             }
@@ -120,7 +106,6 @@
           "name": "sap.fe.templates.ListReport",
           "options": {
             "settings": {
-              "entitySet": "MaintenanceRequests",
               "contextPath": "/MaintenanceRequests",
               "variantManagement": "Page"
             }
@@ -132,7 +117,6 @@
           "name": "sap.fe.templates.ListReport",
           "options": {
             "settings": {
-              "entitySet": "MaintenanceRecords",
               "contextPath": "/MaintenanceRecords",
               "variantManagement": "Page"
             }
@@ -144,7 +128,6 @@
           "name": "sap.fe.templates.ListReport",
           "options": {
             "settings": {
-              "entitySet": "AssetAssignments",
               "contextPath": "/AssetAssignments",
               "variantManagement": "Page"
             }
@@ -156,7 +139,6 @@
           "name": "sap.fe.templates.ListReport",
           "options": {
             "settings": {
-              "entitySet": "Employees",
               "contextPath": "/Employees",
               "variantManagement": "Page"
             }
@@ -168,7 +150,6 @@
           "name": "sap.fe.templates.ListReport",
           "options": {
             "settings": {
-              "entitySet": "OwnershipLedgers",
               "contextPath": "/OwnershipLedgers",
               "variantManagement": "Page"
             }
