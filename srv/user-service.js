@@ -29,16 +29,22 @@ module.exports = class AssetUserService extends cds.ApplicationService {
       if (['RETIRED', 'ARCHIVED'].includes(asset.status)) {
         return req.reject(400, 'Maintenance cannot be requested for a retired or archived asset.');
       }
-      const result = await tx.run(INSERT.into(MaintenanceRequests).entries({
+      const requestID = cds.utils.uuid();
+      const normalizedPriority = String(priority || 'MEDIUM').toUpperCase();
+      if (!['LOW', 'MEDIUM', 'HIGH', 'URGENT'].includes(normalizedPriority)) {
+        return req.reject(400, 'Priority must be LOW, MEDIUM, HIGH, or URGENT.');
+      }
+      await tx.run(INSERT.into(MaintenanceRequests).entries({
+        ID: requestID,
         asset_ID: assetID,
         requestedBy: req.user?.id || 'authenticated-user',
-        issueType,
+        issueType: issueType.trim(),
         description: description.trim(),
-        priority: priority || 'MEDIUM',
+        priority: normalizedPriority,
         status: 'SUBMITTED',
         submittedAt: new Date().toISOString()
       }));
-      return `Maintenance request submitted successfully. Request ID: ${result?.ID || 'created'}`;
+      return `Maintenance request submitted successfully. Request ID: ${requestID}`;
     });
 
     return super.init();
