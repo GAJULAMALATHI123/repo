@@ -1,6 +1,6 @@
 # IT Asset Lifecycle Manager
 
-A SAP BTP application built with the SAP Cloud Application Programming Model (CAP), Node.js, CDS, and SAP Fiori Elements.
+A SAP BTP project scaffold using the SAP Cloud Application Programming Model (CAP), Node.js, CDS, XSUAA, and an application router. The current browser screens are HTML prototypes; SAP Fiori Elements pages still need to be implemented.
 
 ## Project status
 
@@ -14,7 +14,7 @@ This repository is being built in stages. The first commit establishes the CAP d
 - Maintenance records and user-submitted maintenance requests
 - Retirement and archival controls
 - Separate Admin, Manager, and User service access
-- Fiori Elements list reports and object pages
+- Planned Fiori Elements list reports and object pages (not implemented yet)
 - Cloud Foundry / MTA deployment configuration
 
 ## Prerequisites
