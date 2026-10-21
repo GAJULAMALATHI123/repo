@@ -31,7 +31,7 @@ npm install
 npm run watch
 ```
 
-The CAP server exposes OData V4 services under `/odata/v4` when the service definitions are added and served by CAP.
+The CAP services are exposed at `/admin`, `/manager`, and `/user` as defined in `srv/asset-service.cds`. Development uses mocked authentication and SQLite; production is configured for XSUAA and SAP HANA.
 
 ## Important notes
 
