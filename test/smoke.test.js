@@ -111,3 +111,14 @@ test('Fiori Elements routes and Admin lifecycle action forms are hosted behind r
   }
   assert.ok(fs.existsSync(path.join(root, 'srv', 'annotations.cds')));
 });
+
+test('Admin lifecycle handlers validate unique assets and retirement transitions', () => {
+  const adminService = fs.readFileSync(path.join(root, 'srv', 'asset-service.js'), 'utf8');
+  assert.match(adminService, /Asset tag must be unique/);
+  assert.match(adminService, /Serial number must be unique/);
+  assert.match(adminService, /This asset is already retired/);
+  assert.match(adminService, /Retirement date cannot be earlier than purchase date/);
+  for (const action of ['assignAsset', 'transferAsset', 'returnAsset', 'startMaintenance', 'completeMaintenance', 'retireAsset', 'archiveAsset', 'reviewMaintenanceRequest']) {
+    assert.match(adminService, new RegExp("this\\.on\\('" + action + "'"));
+  }
+});
