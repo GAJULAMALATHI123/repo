@@ -12,13 +12,18 @@
         "type": "OData",
         "settings": {
           "odataVersion": "4.0",
-          "annotations": ["localAnnotations"]
+          "annotations": ["localAnnotations", "maintenanceAnnotations"]
         }
       },
       "localAnnotations": {
         "type": "ODataAnnotation",
         "uri": "annotations/annotations.xml",
         "settings": { "localUri": "annotations/annotations.xml" }
+      },
+      "maintenanceAnnotations": {
+        "type": "ODataAnnotation",
+        "uri": "annotations/maintenance-requests.xml",
+        "settings": { "localUri": "annotations/maintenance-requests.xml" }
       }
     }
   },
@@ -32,6 +37,7 @@
       "minUI5Version": "1.120.0",
       "libs": {
         "sap.fe.templates": {},
+        "sap.fe.core": {},
         "sap.m": {},
         "sap.ui.core": {}
       }
@@ -53,16 +59,9 @@
     },
     "routing": {
       "routes": [
-        {
-          "pattern": ":?query:",
-          "name": "AssetsList",
-          "target": "AssetsList"
-        },
-        {
-          "pattern": "Assets({key}):?query:",
-          "name": "AssetsObjectPage",
-          "target": "AssetsObjectPage"
-        }
+        { "pattern": ":?query:", "name": "AssetsList", "target": "AssetsList" },
+        { "pattern": "Assets({key}):?query:", "name": "AssetsObjectPage", "target": "AssetsObjectPage" },
+        { "pattern": "MaintenanceRequests:?query:", "name": "MaintenanceRequestsList", "target": "MaintenanceRequestsList" }
       ],
       "targets": {
         "AssetsList": {
@@ -73,11 +72,7 @@
             "settings": {
               "entitySet": "Assets",
               "variantManagement": "Page",
-              "navigation": {
-                "Assets": {
-                  "detail": { "route": "AssetsObjectPage" }
-                }
-              },
+              "navigation": { "Assets": { "detail": { "route": "AssetsObjectPage" } } },
               "controlConfiguration": {
                 "@com.sap.vocabularies.UI.v1.LineItem": {
                   "tableSettings": { "type": "ResponsiveTable" }
@@ -90,8 +85,22 @@
           "type": "Component",
           "id": "AssetsObjectPage",
           "name": "sap.fe.templates.ObjectPage",
+          "options": { "settings": { "entitySet": "Assets" } }
+        },
+        "MaintenanceRequestsList": {
+          "type": "Component",
+          "id": "MaintenanceRequestsList",
+          "name": "sap.fe.templates.ListReport",
           "options": {
-            "settings": { "entitySet": "Assets" }
+            "settings": {
+              "entitySet": "MaintenanceRequests",
+              "variantManagement": "Page",
+              "controlConfiguration": {
+                "@com.sap.vocabularies.UI.v1.LineItem": {
+                  "tableSettings": { "type": "ResponsiveTable" }
+                }
+              }
+            }
           }
         }
       }
