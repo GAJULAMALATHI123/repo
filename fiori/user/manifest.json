@@ -58,14 +58,29 @@
           "target": "Assets"
         },
         {
+          "pattern": "Assets({key}):?query:",
+          "name": "AssetsObjectPage",
+          "target": "AssetsObjectPage"
+        },
+        {
           "pattern": "assets",
           "name": "Assets",
           "target": "Assets"
         },
         {
+          "pattern": "Assets({key}):?query:",
+          "name": "AssetsObjectPage",
+          "target": "AssetsObjectPage"
+        },
+        {
           "pattern": "requests",
           "name": "MaintenanceRequests",
           "target": "MaintenanceRequests"
+        },
+        {
+          "pattern": "MaintenanceRequests({key}):?query:",
+          "name": "MaintenanceRequestsObjectPage",
+          "target": "MaintenanceRequestsObjectPage"
         }
       ],
       "targets": {
@@ -76,7 +91,14 @@
           "options": {
             "settings": {
               "contextPath": "/Assets",
-              "variantManagement": "Page"
+              "variantManagement": "Page",
+              "navigation": {
+                "Assets": {
+                  "detail": {
+                    "route": "AssetsObjectPage"
+                  }
+                }
+              }
             }
           }
         },
@@ -87,7 +109,34 @@
           "options": {
             "settings": {
               "contextPath": "/MaintenanceRequests",
-              "variantManagement": "Page"
+              "variantManagement": "Page",
+              "navigation": {
+                "MaintenanceRequests": {
+                  "detail": {
+                    "route": "MaintenanceRequestsObjectPage"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "AssetsObjectPage": {
+          "type": "Component",
+          "id": "AssetsObjectPage",
+          "name": "sap.fe.templates.ObjectPage",
+          "options": {
+            "settings": {
+              "contextPath": "/Assets"
+            }
+          }
+        },
+        "MaintenanceRequestsObjectPage": {
+          "type": "Component",
+          "id": "MaintenanceRequestsObjectPage",
+          "name": "sap.fe.templates.ObjectPage",
+          "options": {
+            "settings": {
+              "contextPath": "/MaintenanceRequests"
             }
           }
         }
