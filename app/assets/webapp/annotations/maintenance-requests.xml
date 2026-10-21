@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+  <edmx:DataServices>
+    <Schema Namespace="itam.assets.maintenance" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <Annotations Target="AssetUserService.MaintenanceRequests">
+        <Annotation Term="com.sap.vocabularies.UI.v1.HeaderInfo">
+          <Record Type="com.sap.vocabularies.UI.v1.HeaderInfoType">
+            <PropertyValue Property="TypeName" String="Maintenance Request"/>
+            <PropertyValue Property="TypeNamePlural" String="Maintenance Requests"/>
+            <PropertyValue Property="Title">
+              <Record Type="com.sap.vocabularies.UI.v1.DataField">
+                <PropertyValue Property="Value" Path="issueType"/>
+              </Record>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="com.sap.vocabularies.UI.v1.LineItem">
+          <Collection>
+            <Record Type="com.sap.vocabularies.UI.v1.DataField"><PropertyValue Property="Label" String="Issue Type"/><PropertyValue Property="Value" Path="issueType"/></Record>
+            <Record Type="com.sap.vocabularies.UI.v1.DataField"><PropertyValue Property="Label" String="Priority"/><PropertyValue Property="Value" Path="priority"/></Record>
+            <Record Type="com.sap.vocabularies.UI.v1.DataField"><PropertyValue Property="Label" String="Status"/><PropertyValue Property="Value" Path="status"/></Record>
+            <Record Type="com.sap.vocabularies.UI.v1.DataField"><PropertyValue Property="Label" String="Submitted At"/><PropertyValue Property="Value" Path="submittedAt"/></Record>
+          </Collection>
+        </Annotation>
+      </Annotations>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>
