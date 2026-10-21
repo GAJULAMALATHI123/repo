@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reports and PDF Export | IT Asset Lifecycle Manager</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f4f7fa;color:#183247;font:14px Arial,sans-serif}.bar{background:#123b5d;color:#fff;padding:15px 22px;display:flex;gap:18px;align-items:center;flex-wrap:wrap}.bar strong{margin-right:auto}.bar a{color:#fff}.wrap{max-width:1450px;margin:24px auto;padding:0 18px}.intro,.panel{background:#fff;border:1px solid #dbe4ec;border-radius:12px;padding:20px;margin-bottom:18px}.filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px}.filters label{display:block;font-weight:600;margin-bottom:6px}.filters input,.filters select{width:100%;padding:10px;border:1px solid #b8c7d5;border-radius:6px;background:white}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.actions button{border:0;border-radius:6px;padding:11px 16px;background:#0a6ed1;color:white;cursor:pointer}.actions button.secondary{background:#344f65}.actions button:disabled{opacity:.5;cursor:wait}.hint{color:#536b7c;line-height:1.5}.status{min-height:22px;font-weight:600;margin-top:12px}.table-wrap{overflow:auto;max-height:58vh}table{width:100%;border-collapse:collapse;white-space:nowrap}th,td{text-align:left;border-bottom:1px solid #e1e8ee;padding:10px;vertical-align:top}th{position:sticky;top:0;background:#eaf1f7}.empty{text-align:center;padding:24px;color:#536b7c}#recipients{min-width:260px}@media(max-width:600px){.wrap{padding:0 10px}.bar{padding:12px}.intro,.panel{padding:14px}}
+</style>
+</head>
+<body data-report-base="/manager">
+<header class="bar"><strong>IT Asset Lifecycle Manager · Manager Reports</strong><a href="/fiori/manager/index.html">Back to Manager workspace</a><a href="/logout">Sign out</a></header>
+<main class="wrap">
+<section class="intro"><h1>Reports and PDF exports</h1><p class="hint">Preview authorized asset, maintenance, or assignment data. Apply the same filters before generating a PDF or emailing it. Reports include a title, generation time, selected filters and column labels.</p></section>
+<section class="panel">
+<form id="reportFilters">
+<div class="filters">
+<div><label for="reportType">Report</label><select id="reportType" name="reportType"><option value="assets">Asset inventory</option><option value="maintenance">Maintenance</option><option value="assignments">Assignments</option></select></div>
+<div><label for="status">Status</label><select id="status" name="status"><option value="">All statuses</option><option>AVAILABLE</option><option>ASSIGNED</option><option>UNDER_MAINTENANCE</option><option>RETIRED</option><option>ARCHIVED</option><option>OPEN</option><option>IN_PROGRESS</option><option>COMPLETED</option><option>ACTIVE</option><option>RETURNED</option><option>TRANSFERRED</option></select></div>
+<div><label for="categoryID">Category</label><select id="categoryID" name="categoryID"><option value="">All categories</option></select></div>
+<div><label for="location">Location contains</label><input id="location" name="location" placeholder="e.g. Hyderabad"></div>
+<div><label for="dateFrom">Date from</label><input type="date" id="dateFrom" name="dateFrom"></div>
+<div><label for="dateTo">Date to</label><input type="date" id="dateTo" name="dateTo"></div>
+</div>
+<div class="actions"><button id="previewButton" type="submit">Preview report</button><button id="downloadButton" class="secondary" type="button">Download PDF</button></div>
+<div class="status" id="reportStatus" role="status" aria-live="polite">Choose filters and select Preview report first.</div>
+</form>
+</section>
+<section class="panel">
+<h2>Email report PDF</h2><p class="hint">Enter 1–10 valid email addresses separated by commas or semicolons. The deployment must have SMTP settings configured for email delivery.</p>
+<div class="actions"><input id="recipients" type="text" aria-label="Email recipients" placeholder="person@example.com, team@example.com"><button id="emailButton" type="button">Email PDF report</button></div>
+</section>
+<section class="panel"><h2>Report preview</h2><div class="table-wrap"><table><thead><tr><th>Asset Tag</th><th>Serial Number</th><th>Model</th><th>Category</th><th>Status</th><th>Owner</th><th>Location</th><th>Date</th><th>Details</th></tr></thead><tbody id="reportRows"><tr><td colspan="9" class="empty">Preview a report to display data.</td></tr></tbody></table></div></section>
+</main>
+<script src="/report-center.js" defer></script>
+</body></html>
