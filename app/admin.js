@@ -13,7 +13,6 @@ async function reviewRequest(requestID, decision, button) {
     if (!response.ok) throw new Error((await response.text()).slice(0, 240) || 'Review action failed.');
     status.textContent = 'Request ' + (decision === 'APPROVE' ? 'approved' : 'rejected') + ' successfully.';
     await loadAdminDashboard();
-setInterval(loadAdminDashboard, 30000);
   } catch (error) {
     status.textContent = 'Could not update request: ' + (error.message || 'Check the CAP service and Admin role.');
     buttons.forEach((item) => { item.disabled = false; });
@@ -73,3 +72,4 @@ async function loadAdminDashboard() {
   }
 }
 loadAdminDashboard();
+setInterval(loadAdminDashboard, 30000);
