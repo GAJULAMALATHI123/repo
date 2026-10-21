@@ -63,7 +63,7 @@
       "source": "^/(.*\\.(?:css|js))$",
       "target": "/$1",
       "localDir": "resources",
-      "authenticationType": "xsuaa"
+      "authenticationType": "none"
     },
     {
       "source": "^/signed-out\\.html$",
