@@ -1,0 +1,247 @@
+{
+  "_version": "1.65.0",
+  "sap.app": {
+    "id": "itam.fiori.admin",
+    "type": "application",
+    "title": "IT Asset Lifecycle Manager — Admin",
+    "description": "SAP Fiori elements application for IT Asset Lifecycle Manager",
+    "applicationVersion": {
+      "version": "1.0.0"
+    },
+    "dataSources": {
+      "adminService": {
+        "uri": "/admin/",
+        "type": "OData",
+        "settings": {
+          "odataVersion": "4.0"
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "dependencies": {
+      "minUI5Version": "1.120.0",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {},
+        "sap.fe.templates": {},
+        "sap.f": {}
+      }
+    },
+    "models": {
+      "": {
+        "dataSource": "adminService",
+        "preload": true,
+        "settings": {
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true,
+          "synchronizationMode": "None"
+        }
+      }
+    },
+    "rootView": {
+      "viewName": "itam.fiori.admin.App",
+      "type": "XML",
+      "id": "App",
+      "async": true
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.f.routing.Router",
+        "viewType": "XML",
+        "viewPath": "itam.fiori.admin",
+        "controlId": "app",
+        "controlAggregation": "pages",
+        "async": true
+      },
+      "routes": [
+        {
+          "pattern": "",
+          "name": "Home",
+          "target": "Assets"
+        },
+        {
+          "pattern": "assets",
+          "name": "Assets",
+          "target": "Assets"
+        },
+        {
+          "pattern": "requests",
+          "name": "MaintenanceRequests",
+          "target": "MaintenanceRequests"
+        },
+        {
+          "pattern": "maintenance",
+          "name": "MaintenanceRecords",
+          "target": "MaintenanceRecords"
+        },
+        {
+          "pattern": "assignments",
+          "name": "AssetAssignments",
+          "target": "AssetAssignments"
+        },
+        {
+          "pattern": "employees",
+          "name": "Employees",
+          "target": "Employees"
+        },
+        {
+          "pattern": "categories",
+          "name": "AssetCategories",
+          "target": "AssetCategories"
+        },
+        {
+          "pattern": "vendors",
+          "name": "Vendors",
+          "target": "Vendors"
+        },
+        {
+          "pattern": "departments",
+          "name": "Departments",
+          "target": "Departments"
+        },
+        {
+          "pattern": "ledger",
+          "name": "OwnershipLedgers",
+          "target": "OwnershipLedgers"
+        },
+        {
+          "pattern": "archive",
+          "name": "ArchiveRecords",
+          "target": "ArchiveRecords"
+        }
+      ],
+      "targets": {
+        "Assets": {
+          "type": "Component",
+          "id": "Assets",
+          "name": "sap.fe.templates.ListReport",
+          "options": {
+            "settings": {
+              "entitySet": "Assets",
+              "contextPath": "/Assets",
+              "variantManagement": "Page"
+            }
+          }
+        },
+        "MaintenanceRequests": {
+          "type": "Component",
+          "id": "MaintenanceRequests",
+          "name": "sap.fe.templates.ListReport",
+          "options": {
+            "settings": {
+              "entitySet": "MaintenanceRequests",
+              "contextPath": "/MaintenanceRequests",
+              "variantManagement": "Page"
+            }
+          }
+        },
+        "MaintenanceRecords": {
+          "type": "Component",
+          "id": "MaintenanceRecords",
+          "name": "sap.fe.templates.ListReport",
+          "options": {
+            "settings": {
+              "entitySet": "MaintenanceRecords",
+              "contextPath": "/MaintenanceRecords",
+              "variantManagement": "Page"
+            }
+          }
+        },
+        "AssetAssignments": {
+          "type": "Component",
+          "id": "AssetAssignments",
+          "name": "sap.fe.templates.ListReport",
+          "options": {
+            "settings": {
+              "entitySet": "AssetAssignments",
+              "contextPath": "/AssetAssignments",
+              "variantManagement": "Page"
+            }
+          }
+        },
+        "Employees": {
+          "type": "Component",
+          "id": "Employees",
+          "name": "sap.fe.templates.ListReport",
+          "options": {
+            "settings": {
+              "entitySet": "Employees",
+              "contextPath": "/Employees",
+              "variantManagement": "Page"
+            }
+          }
+        },
+        "AssetCategories": {
+          "type": "Component",
+          "id": "AssetCategories",
+          "name": "sap.fe.templates.ListReport",
+          "options": {
+            "settings": {
+              "entitySet": "AssetCategories",
+              "contextPath": "/AssetCategories",
+              "variantManagement": "Page"
+            }
+          }
+        },
+        "Vendors": {
+          "type": "Component",
+          "id": "Vendors",
+          "name": "sap.fe.templates.ListReport",
+          "options": {
+            "settings": {
+              "entitySet": "Vendors",
+              "contextPath": "/Vendors",
+              "variantManagement": "Page"
+            }
+          }
+        },
+        "Departments": {
+          "type": "Component",
+          "id": "Departments",
+          "name": "sap.fe.templates.ListReport",
+          "options": {
+            "settings": {
+              "entitySet": "Departments",
+              "contextPath": "/Departments",
+              "variantManagement": "Page"
+            }
+          }
+        },
+        "OwnershipLedgers": {
+          "type": "Component",
+          "id": "OwnershipLedgers",
+          "name": "sap.fe.templates.ListReport",
+          "options": {
+            "settings": {
+              "entitySet": "OwnershipLedgers",
+              "contextPath": "/OwnershipLedgers",
+              "variantManagement": "Page"
+            }
+          }
+        },
+        "ArchiveRecords": {
+          "type": "Component",
+          "id": "ArchiveRecords",
+          "name": "sap.fe.templates.ListReport",
+          "options": {
+            "settings": {
+              "entitySet": "ArchiveRecords",
+              "contextPath": "/ArchiveRecords",
+              "variantManagement": "Page"
+            }
+          }
+        }
+      }
+    }
+  }
+}
