@@ -113,6 +113,7 @@ module.exports = class AssetAdminService extends cds.ApplicationService {
       const asset = await tx.run(SELECT.one.from(Assets).where({ ID: assetID }));
       if (!asset) return req.reject(404, 'Asset not found.');
       if (['RETIRED', 'ARCHIVED'].includes(asset.status)) return req.reject(400, 'Retired or archived assets cannot enter maintenance.');
+      if (asset.status === 'UNDER_MAINTENANCE') return req.reject(400, 'This asset is already under maintenance.');
       let request;
       if (requestID) {
         request = await tx.run(SELECT.one.from(MaintenanceRequests).where({ ID: requestID }));
@@ -138,7 +139,7 @@ module.exports = class AssetAdminService extends cds.ApplicationService {
       const tx = cds.tx(req);
       const record = await tx.run(SELECT.one.from(MaintenanceRecords).where({ ID: maintenanceID }));
       if (!record) return req.reject(404, 'Maintenance record not found.');
-      if (record.status === 'COMPLETED') return req.reject(400, 'Maintenance is already completed.');
+      if (record.status !== 'IN_PROGRESS') return req.reject(400, 'Only in-progress maintenance can be completed.');
       if (new Date(completedDate) < new Date(record.reportedDate)) return req.reject(400, 'Completion date cannot be earlier than reported date.');
       await tx.run(UPDATE(MaintenanceRecords).set({ status: 'COMPLETED', completedDate, outcome: outcome.trim(), cost }).where({ ID: maintenanceID }));
       const remaining = await tx.run(SELECT.one.from(MaintenanceRecords).where({ asset_ID: record.asset_ID, status: 'IN_PROGRESS' }));
