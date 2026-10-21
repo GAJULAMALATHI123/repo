@@ -27,6 +27,17 @@ modules:
     parameters:
       buildpack: nodejs_buildpack
 
+  - name: it-asset-lifecycle-manager-approuter
+    type: nodejs
+    path: approuter
+    requires:
+      - name: it-asset-lifecycle-manager-auth
+      - name: it-asset-lifecycle-manager-destination
+    parameters:
+      buildpack: nodejs_buildpack
+      memory: 256M
+      disk-quota: 256M
+
 resources:
   - name: it-asset-lifecycle-manager-db
     type: com.sap.xs.hdi-container
@@ -43,3 +54,21 @@ resources:
       config:
         xsappname: it-asset-lifecycle-manager
         tenant-mode: dedicated
+
+  - name: it-asset-lifecycle-manager-destination
+    type: org.cloudfoundry.managed-service
+    requires:
+      - name: srv-api
+    parameters:
+      service: destination
+      service-plan: lite
+      config:
+        init_data:
+          instance:
+            existing_destinations_policy: update
+            destinations:
+              - Name: srv-api
+                URL: ~{srv-api/srv-url}
+                Type: HTTP
+                ProxyType: Internet
+                Authentication: NoAuthentication
