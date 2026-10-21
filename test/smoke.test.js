@@ -145,6 +145,7 @@ test('Report export includes PDF metadata, filters, recipient validation and rol
   assert.match(utils, /Selected filters/);
   assert.match(utils, /SMTP_HOST/);
   assert.match(utils, /valid recipient email addresses/);
+  assert.match(utils, /more than 1,000 records/);
   assert.match(client, /PDF signature/);
   assert.match(client, /Preview the current filters before downloading/);
   for (const role of ['admin', 'manager']) {
